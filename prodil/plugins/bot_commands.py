@@ -25,6 +25,12 @@ async def test(client: Client, message: Message):
                         "Mühendis Köyü", url="https://t.me/koyumuhendis"
                     )
                 ],
+                [
+                    InlineKeyboardButton(
+                        "Kaynak Kodlar",
+                        url="https://github.com/ahmetveburak/ProgramlamaDilleri",
+                    )
+                ],
             ]
         ),
     )
