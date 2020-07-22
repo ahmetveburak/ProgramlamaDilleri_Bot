@@ -26,3 +26,6 @@ lvlFilter = Filters.create(lambda _, query: query.data in filterList("level"))
 lclFilter = Filters.create(lambda _, query: query.data in filterList("lang"))
 
 resFilter = Filters.create(lambda _, query: query.data in filterList("resources"))
+
+plang = Filters.create(lambda _, query: query.data == "p_lang")
+common = Filters.create(lambda _, query: query.data == "common")

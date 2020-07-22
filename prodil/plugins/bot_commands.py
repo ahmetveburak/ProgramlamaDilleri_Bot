@@ -28,3 +28,21 @@ async def test(client: Client, message: Message):
             ]
         ),
     )
+
+
+@ProDil.on_message(command("oneri") & Filters.private)
+async def new_suggestion(client: Client, message: Message):
+
+    await client.send_message(
+        chat_id=message.chat.id,
+        text="Kaynak önerisinde bulunmak için kaynak formunu doldurarak yeni kaynak önerisinde bulunabilirsin. Önereceğin kaynaklar en kısa zamanda listeye eklenecektir. Botu gelişmesinde katkıda bulunduğun için teşekkür ederiz.",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "Kaynak Ekleme Formu", url="https://forms.gle/bgoVUXKU81d1Cj5y6"
+                    ),
+                ],
+            ]
+        ),
+    )

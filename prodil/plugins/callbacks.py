@@ -4,7 +4,14 @@ from pyrogram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRe
 from prodil.BotConfig import ProDil
 
 from prodil.models.model import Documents, Links, Books, Questions, Users
-from prodil.utils.myfilters import lngFilter, lvlFilter, lclFilter, resFilter
+from prodil.utils.myfilters import (
+    lngFilter,
+    lvlFilter,
+    lclFilter,
+    resFilter,
+    plang,
+    common,
+)
 from prodil.utils.helpers import make_buttons
 from prodil.utils.queries import History
 from datetime import datetime
@@ -19,13 +26,13 @@ history = History()
 async def start(client: Client, message: Message):
     question = questions["p_lang"]["ask"]
     answers = questions["p_lang"]["ans"]
-    buttons = make_buttons(answers=answers.items(), size=2, back=False)
+    buttons = make_buttons(answers=answers.items(), size=3, back=False)
 
     history.add_user(message.chat.id)
 
     await client.send_message(
         chat_id=message.chat.id,
-        text=f"""__Hoşgeldin {message.from_user.first_name}, bu bot henüz geliştirme aşamasındadır. Bu sebeple kaynak altyapısı sınırlı seviyededir. Önerebileceğin kaynaklar varsa__ /hakkinda __kısmından bize ulaşabilirsin.__""",
+        text=f"""__Hoşgeldin__ **{message.from_user.first_name}** __, bu bot henüz geliştirme aşamasındadır. Bu sebeple kaynak altyapısı sınırlı seviyededir. Önerebileceğin kaynaklar varsa__ /hakkinda __kısmından bize ulaşabilir, botun kullanımı sırasında bir sorunla karşılaşırsan tekrardan__ /start __komutunu çalıştırabilirsin.__""",
         reply_markup=ReplyKeyboardRemove(True),
     )
     await client.send_message(
@@ -35,17 +42,31 @@ async def start(client: Client, message: Message):
     )
 
 
-plang = Filters.create(lambda _, query: query.data == "p_lang")
-
-
 @ProDil.on_callback_query(plang, group=1)
 async def ask_lang(client: Client, callback: CallbackQuery):
     question = questions["p_lang"]["ask"]
     answers = questions["p_lang"]["ans"]
-    buttons = make_buttons(answers=answers.items(), size=1, back=False)
+    buttons = make_buttons(answers=answers.items(), size=3, back=False)
 
+    # history.add_data(callback.from_user.id, callback.data)
+    # if callback.data == "p_lang":
+    #     history.go_back(callback.from_user.id)
+    history.hist[callback.from_user.id]["query"] = []
+
+    await callback.edit_message_text(
+        text=question, reply_markup=InlineKeyboardMarkup(buttons)
+    )
+
+
+@ProDil.on_callback_query(common, group=1)
+async def common_ts(client: Client, callback: CallbackQuery):
+    question = questions["resources"]["ask"]
+    answers = questions["resources"]["ans"]
+    buttons = make_buttons(answers=answers.items(), size=1, back="p_lang")
+
+    question = f"__Bu kategorideki kaynaklar henüz alanına ayrılmamış veya bir dile ait olmayan farklı konulardan kaynaklar içermektedir.__\n\n{question}"
     history.add_data(callback.from_user.id, callback.data)
-    if callback.data == "p_lang":
+    if callback.data == "resources":
         history.go_back(callback.from_user.id)
 
     await callback.edit_message_text(
@@ -126,7 +147,10 @@ async def send_texts(client: Client, callback: CallbackQuery):
         text=result,
         disable_web_page_preview=True,
         reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text="Geri", callback_data="resources")]]
+            [
+                [InlineKeyboardButton(text="Geri", callback_data="resources")],
+                [InlineKeyboardButton(text="Baştan Başla", callback_data="p_lang")],
+            ]
         ),
     )
 
@@ -165,3 +189,15 @@ async def send_ebooks(client: Client, message: Message):
             date=datetime.now(),
         )
         user.save()
+
+    await client.edit_message_text(
+        text="Kaynakların Faydalı olması dileğiyle..",
+        disable_web_page_preview=True,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Geri", callback_data="resources")],
+                [InlineKeyboardButton(text="Baştan Başla", callback_data="p_lang")],
+            ]
+        ),
+    )
+

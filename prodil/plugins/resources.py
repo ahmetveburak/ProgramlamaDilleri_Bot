@@ -22,9 +22,10 @@ async def book_update(client: Client, message: Message):
                 text=f"Dosya Adı: {book.name}\nfile_id başarıyla güncellendi.\n",
             )
         else:
+            # TODO Add resource automatically over bot.
             await client.send_message(
                 chat_id=message.chat.id,
-                text="Yeni kaynak eklemek istiyorsun fakat bu fonksiyon henüz mevcut değil.",
+                text="Yeni kaynak eklemek istiyorsun fakat öncelıkle veritabanına kayıt etmen lazım\nBununla ilgili fonksiyonu en kısa zamanda tamamlamalısın.",
             )
     else:
         await client.send_message(

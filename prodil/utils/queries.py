@@ -24,10 +24,10 @@ class History:
         return self.hist[uid]["query"]
 
     def get_res(self, uid: int) -> str:
-        tags = self.hist[uid]["query"]
+        tags = self.hist[uid]["query"].copy()
         resources = None
 
-        not_found = "Kaynak Yok Kardes :("
+        not_found = "Aramalarınıza uygun kaynak bulunamadı. Botta bulunmasının iyi olacağını düşündüğünüz kaynaklar var ise [kaynak formunu](https://forms.gle/bgoVUXKU81d1Cj5y6) kullanarak bize iletebilirsiniz."
 
         if "treng" in tags:
             tags.remove("treng")
@@ -40,7 +40,7 @@ class History:
                 for i, res in enumerate(resources)
             ]
 
-            message = "Lutfen kitaplarin numaralarini bosluk birakarak giriniz"
+            message = "**İndirmek istediğiniz kitapların numaralarını aralarında boşluk bırakarak yazınız.**\n__Faydalı olması dileğiyle..__"
             self.hist[uid]["res"] = resources
             return "".join(result) + message if result else not_found
 
