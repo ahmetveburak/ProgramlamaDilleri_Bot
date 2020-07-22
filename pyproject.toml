@@ -2,7 +2,7 @@
 name = "prodil"
 version = "0.1.0"
 description = ""
-authors = ["ahmetveburak"]
+authors = ["ahmetveburak <ahmetbozyurtt@gmail.com> <https://t.me/musaitbiyerde>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -11,6 +11,7 @@ mongoengine = "^0.20.0"
 pyrogram = {git = "https://github.com/pyrogram/pyrogram.git", rev = "asyncio"}
 python-decouple = "^3.3"
 tgcrypto = "^1.2.1"
+sshtunnel = "^0.1.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
