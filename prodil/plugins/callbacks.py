@@ -190,7 +190,8 @@ async def send_ebooks(client: Client, message: Message):
         )
         user.save()
 
-    await client.edit_message_text(
+    await client.send_message(
+        chat_id=message.chat.id,
         text="Kaynakların Faydalı olması dileğiyle..",
         disable_web_page_preview=True,
         reply_markup=InlineKeyboardMarkup(
