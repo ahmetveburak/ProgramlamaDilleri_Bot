@@ -1,12 +1,12 @@
 from functools import partial
-from pyrogram import Filters, Message, Client, CallbackQuery
-from pyrogram import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram import filters, Client
+from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from prodil.BotConfig import ProDil
 
-command = partial(Filters.command, prefixes="/")
+command = partial(filters.command, prefixes="/")
 
 
-@ProDil.on_message(command("hakkinda") & Filters.private)
+@ProDil.on_message(command("hakkinda") & filters.private)
 async def test(client: Client, message: Message):
 
     await client.send_message(
@@ -15,16 +15,10 @@ async def test(client: Client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "@musaitbiyerde", url="https://t.me/musaitbiyerde"
-                    ),
+                    InlineKeyboardButton("@musaitbiyerde", url="https://t.me/musaitbiyerde"),
                     InlineKeyboardButton("@tayyizaman", url="https://t.me/tayyizaman"),
                 ],
-                [
-                    InlineKeyboardButton(
-                        "Mühendis Köyü", url="https://t.me/koyumuhendis"
-                    )
-                ],
+                [InlineKeyboardButton("Mühendis Köyü", url="https://t.me/koyumuhendis")],
                 [
                     InlineKeyboardButton(
                         "Kaynak Kodlar",
@@ -36,7 +30,7 @@ async def test(client: Client, message: Message):
     )
 
 
-@ProDil.on_message(command("oneri") & Filters.private)
+@ProDil.on_message(command("oneri") & filters.private)
 async def new_suggestion(client: Client, message: Message):
 
     await client.send_message(
@@ -45,9 +39,7 @@ async def new_suggestion(client: Client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "Kaynak Ekleme Formu", url="https://forms.gle/bgoVUXKU81d1Cj5y6"
-                    ),
+                    InlineKeyboardButton("Kaynak Ekleme Formu", url="https://forms.gle/bgoVUXKU81d1Cj5y6"),
                 ],
             ]
         ),

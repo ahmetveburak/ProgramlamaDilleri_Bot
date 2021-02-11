@@ -1,14 +1,13 @@
 from functools import partial
-from pyrogram import Filters, Message, Client, CallbackQuery
-from pyrogram import InlineKeyboardButton, InlineKeyboardMarkup
-
-from prodil.models.model import Documents, Links, Books, Questions
+from pyrogram import filters, Client
+from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+from prodil.models.model import session, Documents, Links, Books, Questions
 from prodil.BotConfig import ProDil
 
-command = partial(Filters.command, prefixes="/")
+command = partial(filters.command, prefixes="/")
 
 
-@ProDil.on_message(Filters.media)
+@ProDil.on_message(filters.media & filters.private)
 async def book_update(client: Client, message: Message):
     if message.from_user.id == ProDil.OWNER_ID:
         book = Documents.objects(path=message.document.file_name).first()
@@ -28,9 +27,7 @@ async def book_update(client: Client, message: Message):
                 text="Yeni kaynak eklemek istiyorsun fakat öncelıkle veritabanına kayıt etmen lazım\nBununla ilgili fonksiyonu en kısa zamanda tamamlamalısın.",
             )
     else:
-        await client.send_message(
-            chat_id=message.chat.id, text="Henüz kaynak eklemek için yetkin yok."
-        )
+        await client.send_message(chat_id=message.chat.id, text="Henüz kaynak eklemek için yetkin yok.")
 
 
 # TODO
@@ -56,6 +53,4 @@ async def new_resource(client: Client, message: Message):
                 text="Yeni kaynak eklemek istiyorsun fakat bu fonksiyon henüz mevcut değil.",
             )
     else:
-        await client.send_message(
-            chat_id=message.chat.id, text="Henüz kaynak eklemek için yetkin yok."
-        )
+        await client.send_message(chat_id=message.chat.id, text="Henüz kaynak eklemek için yetkin yok.")

@@ -1,11 +1,13 @@
-from pyrogram import Filters
-from prodil.models.model import Questions
+from pyrogram import filters
+from prodil.models.model import session, Questions
+from typing import List
 
-questions = Questions.objects().first().question
+questions = session.query(Questions).filter(Questions.id == 1).first()
 
 
-def filterList(filter_data):
-    myFilter = list(questions[filter_data]["ans"].keys())
+def filterList(filter_data) -> List[str]:
+    myFilter = list(getattr(questions, filter_data)["ans"].keys())
+    # myFilter = list(questions[filter_data]["ans"].keys())
 
     go_back = {
         "None": "p_lang",
@@ -19,13 +21,10 @@ def filterList(filter_data):
     return myFilter
 
 
-lngFilter = Filters.create(lambda _, query: query.data in filterList("p_lang"))
+lngFilter = filters.create(lambda _, __, query: query.data in filterList("p_lang"))
+lvlFilter = filters.create(lambda _, __, query: query.data in filterList("level"))
+lclFilter = filters.create(lambda _, __, query: query.data in filterList("lang"))
+resFilter = filters.create(lambda _, __, query: query.data in filterList("resources"))
 
-lvlFilter = Filters.create(lambda _, query: query.data in filterList("level"))
-
-lclFilter = Filters.create(lambda _, query: query.data in filterList("lang"))
-
-resFilter = Filters.create(lambda _, query: query.data in filterList("resources"))
-
-plang = Filters.create(lambda _, query: query.data == "p_lang")
-common = Filters.create(lambda _, query: query.data == "common")
+plang = filters.create(lambda _, __, query: query.data == "p_lang")
+common = filters.create(lambda _, __, query: query.data == "common")
