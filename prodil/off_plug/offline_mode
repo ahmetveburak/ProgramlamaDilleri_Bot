@@ -1,0 +1,21 @@
+from pyrogram import Client, filters
+from pyrogram.types import Message, CallbackQuery
+from functools import partial
+from prodil.BotConfig import ProDil
+import logging
+
+command = partial(filters.command, prefixes=["!", "/", "."])
+
+
+@ProDil.on_message(filters.private)
+async def offline(client: Client, message: Message) -> None:
+
+    uid = message.chat.id
+    uname = message.chat.username if message.chat.username else None
+    fname = message.chat.first_name
+    date = message.date
+    logging.warning(f"WATHCER: {uid} {uname} {fname} {date}")
+
+    await message.reply_text(
+        text="Programlama Dilleri botu en kısa zamanda tekrardan aktifleştirilecektir. Bu süreçte önerileriniz veya sorularınız için iletişim: @musaitbiyerde"
+    )

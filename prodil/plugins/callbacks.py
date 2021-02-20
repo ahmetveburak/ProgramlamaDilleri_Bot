@@ -7,6 +7,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
     ReplyKeyboardRemove,
 )
+from pyrogram.types.messages_and_media import message
 
 from prodil.BotConfig import ProDil
 
@@ -58,7 +59,8 @@ async def ask_lang(client: Client, callback: CallbackQuery):
     # history.add_data(callback.from_user.id, callback.data)
     # if callback.data == "p_lang":
     #     history.go_back(callback.from_user.id)
-    history.hist[callback.from_user.id]["query"] = []
+    # history.hist[callback.from_user.id]["query"] = []
+    history.add_user(callback.from_user.id)
 
     await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
 
@@ -129,18 +131,39 @@ async def send_texts(client: Client, callback: CallbackQuery):
     result = history.get_res(cb.id)
     tags = history.tags(cb.id)
 
-    # if tags[-1] == "links" or tags[-1] == "ebooks":
+    if tags[-1] == "links" or tags[-1] == "books":
+        user = session.query(Users).filter(Users.uid == str(cb.id)).first()
+        if user:
+            if cb.first_name not in user.first_name:
+                fn = user.first_name.copy()
+                fn.append(cb.first_name)
+                user.first_name = fn
+            if cb.last_name and cb.last_name not in user.last_name:
+                ln = user.last_name.copy()
+                ln.append(cb.last_name)
+                user.last_name = ln
+            if cb.username and cb.username not in user.username:
+                un = user.username.copy()
+                un.append(cb.username)
+                user.username = un
 
-    #     user = Users(
-    #         user_id=cb.id,
-    #         first_name=cb.first_name,
-    #         last_name=cb.last_name if cb.last_name else None,
-    #         username=cb.username if cb.username else None,
-    #         tags=tags,
-    #         books=None,
-    #         date=datetime.now(),
-    #     )
-    #     user.save()
+            user_hist = user.history.copy()
+            user_hist.update({str(int(datetime.now().timestamp())): {"tags": tags, "books": []}})
+            user.history = user_hist
+            print("links or books saved")
+        else:
+            user = Users(
+                uid=cb.id,
+                first_name=[cb.first_name],
+                last_name=[cb.last_name] if cb.last_name else [],
+                username=[cb.username] if cb.username else [],
+                history={
+                    str(int(datetime.now().timestamp())): {"tags": tags, "books": []},
+                },
+            )
+            print("new user")
+            session.add(user)
+        session.commit()
 
     await callback.edit_message_text(
         text=result,
@@ -154,47 +177,95 @@ async def send_texts(client: Client, callback: CallbackQuery):
     )
 
 
-# @ProDil.on_message(filters.text)
-# async def send_ebooks(client: Client, message: Message):
-#     msg = message.from_user
+def query_filter_func(msg: Message) -> bool:
 
-#     if message.text == "/hakkinda":
-#         # TODO need to fix
-#         pass
+    if msg.chat.id in history.hist.keys():
+        if history.hist[msg.chat.id]["query"][-1] == "ebooks":
+            return True
+    else:
+        return False
 
-#     elif msg.id in history.hist.keys():
 
-#         books = message.text.split()
-#         tags = history.tags(message.chat.id)
-#         resources = history.hist[message.chat.id]["res"]
+query_filter = filters.create(lambda _, __, message: query_filter_func(message))
 
-#         down_books = []
 
-#         for i in books:
-#             n = int(i) - 1
-#             # print(f"{resources[n].name}\n{resources[n].path}")
-#             down_books.append(resources[n].name)
-#             await client.send_cached_media(chat_id=message.chat.id, file_id=resources[n].file_id)
+@ProDil.on_message(query_filter & filters.private)
+async def send_ebooks(client: Client, message: Message):
+    msg = message.from_user
 
-#         user = Users(
-#             user_id=msg.id,
-#             first_name=msg.first_name,
-#             last_name=msg.last_name if msg.last_name else None,
-#             username=msg.username if msg.username else None,
-#             tags=tags,
-#             books=down_books,
-#             date=datetime.now(),
-#         )
-#         user.save()
+    try:
+        books = list(map(int, message.text.split()))
+    except ValueError:
+        await client.send_message(
+            chat_id=message.chat.id,
+            text="Yalnizca sayi dokuman numaralarini bosluk birakarak yaziniz. Or: 1 3 6",
+        )
+        return
 
-#     await client.send_message(
-#         chat_id=message.chat.id,
-#         text="Kaynakların Faydalı olması dileğiyle..",
-#         disable_web_page_preview=True,
-#         reply_markup=InlineKeyboardMarkup(
-#             [
-#                 [InlineKeyboardButton(text="Geri", callback_data="resources")],
-#                 [InlineKeyboardButton(text="Baştan Başla", callback_data="p_lang")],
-#             ]
-#         ),
-#     )
+    tags = history.tags(message.chat.id)
+    resources = history.hist[message.chat.id]["res"]
+
+    down_books = []
+    in_list = False
+    for i in books:
+        n = i - 1
+        if 0 <= n < len(resources):
+            # print(f"{resources[n].name}\n{resources[n].path}")
+            down_books.append(resources[n].name)
+            # print(resources[n].name)
+            await client.send_cached_media(chat_id=message.chat.id, file_id=resources[n].file_id)
+        else:
+            in_list = True
+
+    if in_list:
+        await client.send_message(
+            chat_id=message.chat.id,
+            text="Girmis oldugunuz bazi degerler liste sinirlari disinda oldugu icin gonderilememistir.",
+        )
+
+    user = session.query(Users).filter(Users.uid == str(msg.id)).first()
+    if user:
+        if msg.first_name not in user.first_name:
+            fn = user.first_name.copy()
+            fn.append(msg.first_name)
+            user.first_name = fn
+        if msg.last_name and msg.last_name not in user.last_name:
+            ln = user.last_name.copy()
+            ln.append(msg.last_name)
+            user.last_name = ln
+        if msg.username and msg.username not in user.username:
+            un = user.username.copy()
+            un.append(msg.username)
+            user.username = un
+
+        user_hist = user.history.copy()
+        user_hist.update(
+            {str(int(datetime.now().timestamp())): {"tags": tags, "books": down_books}}
+        )
+        user.history = user_hist
+
+    else:
+        user = Users(
+            uid=msg.id,
+            first_name=[msg.first_name],
+            last_name=[msg.last_name] if msg.last_name else [],
+            username=[msg.username] if msg.username else [],
+            history={
+                str(int(datetime.now().timestamp())): {"tags": tags, "books": down_books},
+            },
+        )
+
+        session.add(user)
+    session.commit()
+
+    await client.send_message(
+        chat_id=message.chat.id,
+        text="Kaynakların Faydalı olması dileğiyle..",
+        disable_web_page_preview=True,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Geri", callback_data="resources")],
+                [InlineKeyboardButton(text="Baştan Başla", callback_data="p_lang")],
+            ]
+        ),
+    )

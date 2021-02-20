@@ -128,14 +128,14 @@ class Users(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     uid = Column(String(100), nullable=False)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), default=None)
-    username = Column(String(100), default=None)
+    first_name = Column(ARRAY(String(70)))
+    last_name = Column(ARRAY(String(70)))
+    username = Column(ARRAY(String(40)))
     history = Column(JSON, nullable=False)
 
-    # userteatables = relationship("UserTeaTable")
-
-    def __init__(self, uid: int, first_name: str, last_name: str, username: str, history: JSON) -> None:
+    def __init__(
+        self, uid: int, first_name: str, last_name: str, username: str, history: JSON
+    ) -> None:
         self.uid = uid
         self.first_name = first_name
         self.last_name = last_name

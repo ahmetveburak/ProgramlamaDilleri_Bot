@@ -16,6 +16,7 @@ class ProDil(Client, Message):
             session_name=name,
             config_file=f"{name}/{name}.ini",
             workers=8,
+            # plugins=dict(root=f"{name}/off_plug"),
             plugins=dict(root=f"{name}/plugins"),
             workdir=f"{name}/sessions",
         )

@@ -7,7 +7,11 @@ class History:
         self.hist: dict = {}
 
     def add_user(self, uid: int) -> None:
-        self.hist.update({uid: {"query": [], "time": datetime.now()}, "res": [], "res_text": ""})
+        self.hist.update({uid: {"query": [], "time": datetime.now(), "res": [], "res_text": ""}})
+
+    def del_user(self, uid: int) -> None:
+        del self.hist[uid]
+        pass
 
     def add_data(self, uid: int, data: str) -> None:
         self.hist[uid]["query"].append(data)
@@ -23,17 +27,23 @@ class History:
 
     def get_res(self, uid: int) -> str:
         tags = self.hist[uid]["query"].copy()
-        print(tags)
+        # print(tags)
         resources = None
 
         not_found = "Aramalarınıza uygun kaynak bulunamadı. Botta bulunmasının iyi olacağını düşündüğünüz kaynaklar var ise [kaynak formunu](https://forms.gle/bgoVUXKU81d1Cj5y6) kullanarak bize iletebilirsiniz."
-        resources = session.query(Links).filter(Links.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}")).all()
+        resources = (
+            session.query(Links).filter(Links.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}")).all()
+        )
         # return not_found
         if "treng" in tags:
             tags.remove("treng")
 
         if tags[-1] == "ebooks":
-            resources = session.query(Documents).filter(Documents.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}")).all()
+            resources = (
+                session.query(Documents)
+                .filter(Documents.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}"))
+                .all()
+            )
             # resources = Documents.objects(tags__all=tags[:-1]).order_by("-rating")
 
             result = [
@@ -46,7 +56,11 @@ class History:
             return "".join(result) + message if result else not_found
 
         elif tags[-1] == "links":
-            resources = session.query(Links).filter(Links.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}")).all()
+            resources = (
+                session.query(Links)
+                .filter(Links.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}"))
+                .all()
+            )
             # resources = Links.objects(tags__all=tags[:-1]).order_by("-rating")
 
             result = [
@@ -58,7 +72,11 @@ class History:
             return "".join(result) if result else not_found
 
         else:
-            resources = session.query(Books).filter(Books.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}")).all()
+            resources = (
+                session.query(Books)
+                .filter(Books.tags.op("@>")("{" f"{','.join(tags[:-1])}" "}"))
+                .all()
+            )
             # resources = Books.objects(tags__all=tags[:-1]).order_by("-rating")
 
             result = [
