@@ -11,7 +11,7 @@ def filterList(filter_data) -> List[str]:
         "p_lang": "level",
         "level": "lang",
         "lang": "resources",
-        "resources": "Nope",
+        "resources": "None",
     }
 
     myFilter.append(go_back[filter_data])
