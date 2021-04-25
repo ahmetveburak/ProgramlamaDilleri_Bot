@@ -1,8 +1,6 @@
 from pyrogram import Client
 from pyrogram.types import Message
 from pyrogram import __version__
-from prodil.models import model
-import configparser
 
 
 class ProDil(Client, Message):
@@ -16,9 +14,8 @@ class ProDil(Client, Message):
             session_name=name,
             config_file=f"{name}/{name}.ini",
             workers=8,
-            # plugins=dict(root=f"{name}/off_plug"),
             plugins=dict(root=f"{name}/plugins"),
-            workdir=f"{name}/sessions",
+            workdir=f"{name}",
         )
 
         self.admins = {chat: {ProDil.OWNER_ID} for chat in ProDil.CHATS}

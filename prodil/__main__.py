@@ -1,14 +1,11 @@
-# from prodil.models.model import Documents, Links, Books, Questions
 from prodil.BotConfig import ProDil
-
-import configparser
+from decouple import config
 import logging
 
-from decouple import config
-
+# RUNTIME DEBUG LOG_LEVEL INFO
 logging.basicConfig(
     format="%(levelname)s - %(name)s - %(message)s",
-    level=logging.getLevelName(config("LOG_LEVEL", default="WARNING")),
+    level=logging.getLevelName(config("LOG_LEVEL", default="ERROR")),
 )
 
 if __name__ == "__main__":
