@@ -47,12 +47,15 @@ class QueryHistory:
         return query["p_lang"] + query["lang"] + query["level"]
 
     def get_query(self, model: Union[Document, Link, Book], tag_ids: list) -> List[Union[Document, Link, Book]]:
+
+        count = 3 if len(tag_ids) >= 3 else 1
+
         if model == Document:
             document_ids = (
                 session.query(doc_tag_table.c.document_id)
                 .filter(doc_tag_table.c.tag_id.in_(tag_ids))
                 .group_by(doc_tag_table.c.document_id)
-                .having(func.count(doc_tag_table.c.tag_id) == 3)
+                .having(func.count(doc_tag_table.c.tag_id) == count)
                 .all()
             )
             return (
@@ -67,7 +70,7 @@ class QueryHistory:
                 session.query(link_tag_table.c.link_id)
                 .filter(link_tag_table.c.tag_id.in_(tag_ids))
                 .group_by(link_tag_table.c.link_id)
-                .having(func.count(link_tag_table.c.tag_id) == 3)
+                .having(func.count(link_tag_table.c.tag_id) == count)
                 .all()
             )
             return session.query(Link).filter(Link.id.in_(link_ids), Link.enabled == True).order_by(-Link.rating).all()
@@ -77,7 +80,7 @@ class QueryHistory:
                 session.query(book_tag_table.c.book_id)
                 .filter(book_tag_table.c.tag_id.in_(tag_ids))
                 .group_by(book_tag_table.c.book_id)
-                .having(func.count(book_tag_table.c.tag_id) == 3)
+                .having(func.count(book_tag_table.c.tag_id) == count)
                 .all()
             )
             return session.query(Book).filter(Book.id.in_(book_ids), Book.enabled == True).order_by(-Book.rating).all()

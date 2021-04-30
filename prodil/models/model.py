@@ -1,10 +1,8 @@
-from typing import List
 from sqlalchemy import create_engine, Column, String, ForeignKey, Table
-from sqlalchemy.engine import base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.sqltypes import JSON
-from sqlalchemy.types import BigInteger, Boolean, String, Integer, DateTime, ARRAY, Float
+from sqlalchemy.types import Boolean, String, Integer, DateTime, Float
 from sqlalchemy.orm import sessionmaker, relationship
 from configparser import ConfigParser, SectionProxy
 from datetime import datetime

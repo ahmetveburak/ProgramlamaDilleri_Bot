@@ -1,6 +1,6 @@
 from functools import partial
 from pyrogram import filters, Client
-from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from prodil.BotConfig import ProDil
 
 command = partial(filters.command, prefixes="/")

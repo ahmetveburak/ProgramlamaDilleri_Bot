@@ -110,7 +110,10 @@ async def ask_local(client: Client, callback: CallbackQuery):
 async def ask_resource(client: Client, callback: CallbackQuery):
     question = questions.resources["ask"]
     answers = questions.resources["ans"]
-    buttons = make_buttons(answers=answers.items(), size=1, back="lang")
+
+    # Common resources cause disorder to the bot session. Check first choice is Common or not
+    back_button = "p_lang" if history.hist[callback.from_user.id]["query"]["p_lang"][0] == "Common" else "resources"
+    buttons = make_buttons(answers=answers.items(), size=1, back=back_button)
 
     if callback.data != "resources":
         history.add_data(callback.from_user.id, "lang", callback.data)
@@ -130,6 +133,7 @@ async def send_texts(client: Client, callback: CallbackQuery):
     history.add_data(from_user.id, "res", callback.data)
 
     result = history.get_res(from_user.id, tags)
+    history.show_history(callback.from_user.id)
 
     if history.hist[from_user.id]["query"]["res"][0] != "Ebooks":
         save_user(
