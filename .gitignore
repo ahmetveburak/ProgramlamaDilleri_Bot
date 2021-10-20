@@ -1,6 +1,7 @@
-# Extras
+# Custom
 TODO.md
 resources/
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
