@@ -2,7 +2,7 @@
 TODO.md
 resources/
 .idea/
-
+prodil_client/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
