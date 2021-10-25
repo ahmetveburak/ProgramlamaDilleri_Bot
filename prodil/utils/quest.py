@@ -5,7 +5,7 @@ from pyrogram.types import InlineKeyboardButton as InlineKB
 
 class Question:
     class Level:
-        QUESTION = "dilini hangi seviyede biliyorsun?"
+        QUESTION = "Hangi seviyede kaynak arıyorsun?"
         ANSWER = {
             "BGN": "Başlangıç",
             "EXP": "Orta",
@@ -36,7 +36,7 @@ class Question:
             "Python": "Python",
             "Java": "Java",
             "C#": "C#",
-            "Common": "Genel",
+            "Genel": "Genel",
         }
 
     LEVEL = "level"

@@ -51,25 +51,6 @@ async def query_start(_: Client, callback: CallbackQuery):
     await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
 
 
-@ProDil.on_callback_query(bot_filters.common)
-async def common_ts(_: Client, callback: CallbackQuery):
-    question, answer = quest.get_choices(quest.CONTENT)
-    buttons = make_buttons(answer=answer, size=1, back="p_lang")
-
-    question = (
-        f"__Bu kategorideki kaynaklar henüz alanına ayrılmamış "
-        f"veya bir dile ait olmayan farklı konulardan kaynaklar "
-        f"içermektedir.__\n\n{question}"
-    )
-
-    # if callback.data != "resources":
-    #     history.add_data(callback.from_user.id, "p_lang", callback.data)
-    # if callback.data == "resources":
-    #     history.go_back(callback.from_user.id, "p_lang")
-
-    await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
-
-
 @ProDil.on_callback_query(bot_filters.level)
 async def query_level(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
@@ -79,7 +60,7 @@ async def query_level(_: Client, callback: CallbackQuery):
     buttons = make_buttons(answer=answer, size=1, back=quest.CATEGORY)
 
     await callback.edit_message_text(
-        text=f"**{user.category}** {question}",
+        text=question,
         reply_markup=InlineKeyboardMarkup(buttons),
     )
 
@@ -91,11 +72,6 @@ async def query_local(_: Client, callback: CallbackQuery):
 
     question, answer = quest.get_choices(quest.LOCAL)
     buttons = make_buttons(answer=answer, size=1, back=quest.LEVEL)
-
-    # if callback.data != "lang":
-    #     history.add_data(callback.from_user.id, "level", callback.data)
-    # if callback.data == "lang":
-    #     history.go_back(callback.from_user.id, "lang")
 
     await callback.edit_message_text(
         text=question,
@@ -110,15 +86,6 @@ async def query_content(_: Client, callback: CallbackQuery):
 
     question, answer = quest.get_choices(quest.CONTENT)
     buttons = make_buttons(answer=answer, size=1, back=quest.LOCAL)
-
-    # Common resources cause disorder to the bot session. Check first choice is Common or not
-    # back_button = "p_lang" if history.hist[callback.from_user.id]["query"]["p_lang"][0] == "Common" else "resources"
-    # buttons = make_buttons(answers=answers.items(), size=1, back=back_button)
-
-    # if callback.data != "resources":
-    #     history.add_data(callback.from_user.id, "lang", callback.data)
-    # if callback.data == "resources":
-    #     history.go_back(callback.from_user.id, "res")
 
     await callback.edit_message_text(
         text=question,
