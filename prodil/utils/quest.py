@@ -57,6 +57,20 @@ class Question:
 quest = Question()
 
 
+class Button:
+    icons = ("🔴", "🟢")
+    order = (0, 1)
+
+    def __init__(self, text):
+        self.text = text
+        self.toggler = 0
+        self.icon = self.icons[0]
+
+    def toggle(self):
+        self.toggler = 1 if self.toggler == 0 else 0
+        self.icon = self.icons[self.toggler]
+
+
 def slicer(button_list: List[InlineKB], size: int) -> List[List[InlineKB]]:
     return [button_list[i : i + size] for i in range(0, len(button_list), size)]
 
@@ -69,6 +83,12 @@ def make_buttons(answer: Dict[str, str], size: int, back: Union[str, bool]) -> L
         back_button: InlineKB = InlineKB(text="Geri", callback_data=back)
         buttons.append([back_button])
 
+    return buttons
+
+
+def content_buttons(num: int) -> List[List[InlineKB]]:
+    buttons = [InlineKB(text=f"🔴 {i+1}", callback_data=str(i + 1)) for i in range(num)]
+    buttons = slicer(buttons, 4)
     return buttons
 
 

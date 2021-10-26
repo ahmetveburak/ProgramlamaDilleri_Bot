@@ -63,5 +63,29 @@ class ProDilFilters:
     def common(self) -> Filter:
         return filters.create(lambda _, __, query: query.data == self.COMMON)
 
+    @property
+    def downloads(self) -> Filter:
+        return filters.create(lambda _, __, query: query.data in ("BK", "DC", "LN"))
+
+    @property
+    def numbers(self) -> Filter:
+        return filters.create(lambda _, __, query: query.data in list(map(str, range(1, 9))))
+
+    @property
+    def next_page(self) -> Filter:
+        return filters.create(lambda _, __, query: query.data == "next")
+
+    @property
+    def prev_page(self) -> Filter:
+        return filters.create(lambda _, __, query: query.data == "prev")
+
+    @property
+    def change(self) -> Filter:
+        return filters.create(lambda _, __, query: query.data in ["next", "prev"])
+
+    @property
+    def download(self) -> Filter:
+        return filters.create(lambda _, __, query: query.data == "download")
+
 
 bot_filters = ProDilFilters()
