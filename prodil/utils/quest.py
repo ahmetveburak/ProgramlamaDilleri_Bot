@@ -23,7 +23,7 @@ class Question:
     class Content:
         QUESTION = "Nasıl bir kaynak arıyorsun?"
         ANSWER = {
-            "BK": "Kitap Önerileri",
+            # "BK": "Kitap Önerileri",
             "DC": "İndirilebilen Kaynaklar",
             "LN": "Videolar ve Faydalı Linkler",
         }
@@ -57,20 +57,6 @@ class Question:
 quest = Question()
 
 
-class Button:
-    icons = ("🔴", "🟢")
-    order = (0, 1)
-
-    def __init__(self, text):
-        self.text = text
-        self.toggler = 0
-        self.icon = self.icons[0]
-
-    def toggle(self):
-        self.toggler = 1 if self.toggler == 0 else 0
-        self.icon = self.icons[self.toggler]
-
-
 def slicer(button_list: List[InlineKB], size: int) -> List[List[InlineKB]]:
     return [button_list[i : i + size] for i in range(0, len(button_list), size)]
 
@@ -90,13 +76,3 @@ def content_buttons(num: int) -> List[List[InlineKB]]:
     buttons = [InlineKB(text=f"🔴 {i+1}", callback_data=str(i + 1)) for i in range(num)]
     buttons = slicer(buttons, 4)
     return buttons
-
-
-def user_exists(first_name: str, last_name: str, username: str, user):
-    return all(
-        [
-            first_name in [i.first_name for i in user.userinfo],
-            last_name in [i.last_name for i in user.userinfo],
-            username in [i.username for i in user.userinfo],
-        ]
-    )
