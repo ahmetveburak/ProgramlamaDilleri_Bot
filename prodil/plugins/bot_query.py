@@ -1,15 +1,12 @@
-from functools import partial
-
-from pyrogram import Client, filters
-from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
+from pyrogram import Client
+from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
 
 from prodil.BotConfig import ProDil
 from prodil.utils.botuser import UserNavigation, user_list
 from prodil.utils.filters import bot_filters
+from prodil.utils.helpers import button_toggle, command
 from prodil.utils.quest import content_buttons, make_buttons, quest
 from prodil_client.client import api
-
-command = partial(filters.command, prefixes="/")
 
 
 @ProDil.on_message(command("start"))
@@ -91,32 +88,31 @@ async def query_content(_: Client, callback: CallbackQuery):
     )
 
 
-send_book = filters.create(lambda _, __, query: query.choices in quest.Content.ANSWER.keys())
-
-
 @ProDil.on_callback_query(bot_filters.downloads)
 async def query_send_book(_: Client, callback: CallbackQuery):
-    print(callback.data)
+    print(callback.from_user.first_name, "\n", callback.from_user.id)
     user = user_list.get(callback.from_user.id)
     user.action(callback.data, quest.CONTENT)
 
-    response = api.get_resources(user.level, user.local, user.content, user.category)
+    user.set_page_data(callback.message.reply_markup.inline_keyboard)
 
-    print(response)
-    buttons = content_buttons(len(response["results"]))
-    await callback.edit_message_text(
-        text="Deneme Sorusu",
-        reply_markup=InlineKeyboardMarkup(buttons),
-    )
+    response = user.respons[user.page] = api.get_resources(**user.query_args)
 
+    buttons = content_buttons(len(response["results"])) if callback.data == "DC" else []
+    buttons.extend(user.get_buttons(response, callback.data == "DC"))
 
-def button_toggle(button: InlineKeyboardButton) -> None:
-    is_selected = button.text[0] == "🔴"
+    text = user.parse_response()
+    if text:
+        await callback.edit_message_text(
+            text=text,
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
 
-    if is_selected:
-        button.text = button.text.replace("🔴", "🟢")
     else:
-        button.text = button.text.replace("🟢", "🔴")
+        await callback.answer(
+            text="Bu alanda henuz kaynak bulunmamaktadir.",
+            show_alert=True,
+        )
 
 
 @ProDil.on_callback_query(bot_filters.numbers)
@@ -147,14 +143,12 @@ async def query_next(_: Client, callback: CallbackQuery):
     response = user.get_response()
     buttons = user.get_data()
     if not response:
-        response = user.respons[user.page] = api.get_resources("", "", "", "", user.page)
+        response = user.respons[user.page] = api.get_resources(**user.query_args)
         buttons = content_buttons(len(response["results"]))
         buttons.extend(user.get_buttons(response))
 
-    text = user.parse_response()
-
     await callback.edit_message_text(
-        text=text,
+        text=user.parse_response(),
         reply_markup=InlineKeyboardMarkup(buttons),
     )
 

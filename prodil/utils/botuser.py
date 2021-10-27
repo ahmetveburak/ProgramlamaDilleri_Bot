@@ -30,6 +30,7 @@ class UserNavigation(object):
         self.choices = {}
 
     def action(self, data: str, question: str = None) -> None:
+        print(data)
         idx = self.query_order.index(question)
         last = self.query_order[idx + 1]
         if last == data:
@@ -49,7 +50,7 @@ class UserNavigation(object):
     def get_page_data(self, page):
         return self.choices.get(page)
 
-    def get_buttons(self, data):
+    def get_buttons(self, data, download: bool = False):
         total = data["count"]
         next_page = "next" if data["next"] else "None"
         prev_page = "prev" if data["previous"] else "None"
@@ -60,8 +61,10 @@ class UserNavigation(object):
                 InlineKB(text=f"{self.page}/{ceil(total / 8)}", callback_data="add"),
                 InlineKB(text=">", callback_data=next_page),
             ],
-            [InlineKB(text="Indir", callback_data="download")],
         ]
+        if download:
+            buttons.append([InlineKB(text="Indir", callback_data="download")])
+
         return buttons
 
     def get_resources(self):
@@ -95,6 +98,16 @@ class UserNavigation(object):
     @property
     def content(self):
         return self.query[quest.CONTENT][0]
+
+    @property
+    def query_args(self):
+        return {
+            quest.LEVEL: self.level,
+            quest.LOCAL: self.local,
+            quest.CONTENT: self.content,
+            quest.CATEGORY: self.category,
+            "page": self.page,
+        }
 
     def parse_response(self):
         """
