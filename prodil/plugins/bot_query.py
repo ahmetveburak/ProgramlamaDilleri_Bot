@@ -4,9 +4,11 @@ from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKe
 from prodil.BotConfig import ProDil
 from prodil.utils.botuser import UserNavigation, user_list
 from prodil.utils.filters import bot_filters
-from prodil.utils.helpers import button_toggle, command
+from prodil.utils.helpers import button_toggle, command, user_not_exists
 from prodil.utils.quest import content_buttons, make_buttons, quest
 from prodil_client.client import api
+
+# TODO refactor repeated lines
 
 
 @ProDil.on_message(command("start"))
@@ -38,6 +40,10 @@ async def start(client: Client, message: Message):
 @ProDil.on_callback_query(bot_filters.start)
 async def query_start(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
+    if not user:
+        await user_not_exists(callback)
+        return
+
     user.action(callback.data)
 
     question, answer = quest.get_choices(quest.CATEGORY)
@@ -49,6 +55,10 @@ async def query_start(_: Client, callback: CallbackQuery):
 @ProDil.on_callback_query(bot_filters.level)
 async def query_level(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
+    if not user:
+        await user_not_exists(callback)
+        return
+
     user.action(callback.data, quest.CATEGORY)
 
     question, answer = quest.get_choices(quest.LEVEL)
@@ -63,6 +73,10 @@ async def query_level(_: Client, callback: CallbackQuery):
 @ProDil.on_callback_query(bot_filters.local)
 async def query_local(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
+    if not user:
+        await user_not_exists(callback)
+        return
+
     user.action(callback.data, quest.LEVEL)
 
     question, answer = quest.get_choices(quest.LOCAL)
@@ -77,6 +91,10 @@ async def query_local(_: Client, callback: CallbackQuery):
 @ProDil.on_callback_query(bot_filters.content)
 async def query_content(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
+    if not user:
+        await user_not_exists(callback)
+        return
+
     user.action(callback.data, quest.LOCAL)
 
     question, answer = quest.get_choices(quest.CONTENT)
@@ -88,14 +106,16 @@ async def query_content(_: Client, callback: CallbackQuery):
     )
 
 
-@ProDil.on_callback_query(bot_filters.downloads)
-async def query_send_book(_: Client, callback: CallbackQuery):
-    print(callback.from_user.first_name, "\n", callback.from_user.id)
+@ProDil.on_callback_query(bot_filters.connection)
+async def query_connection(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
+    if not user:
+        await user_not_exists(callback)
+        return
+
     user.action(callback.data, quest.CONTENT)
 
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
-
     response = user.respons[user.page] = api.get_resources(**user.query_args)
 
     buttons = content_buttons(len(response["results"])) if callback.data == "DC" else []
@@ -117,6 +137,11 @@ async def query_send_book(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.numbers)
 async def query_numbers(_: Client, callback: CallbackQuery):
+    user = user_list.get(callback.from_user.id)
+    if not user:
+        await user_not_exists(callback)
+        return
+
     selected = int(callback.data) - 1
     x, y = int(selected / 4), int(selected % 4)
 
@@ -132,6 +157,10 @@ async def query_numbers(_: Client, callback: CallbackQuery):
 @ProDil.on_callback_query(bot_filters.change)
 async def query_next(_: Client, callback: CallbackQuery):
     user = user_list[callback.from_user.id]
+    if not user:
+        await user_not_exists(callback)
+        return
+
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
     is_next = callback.data == "next"
 
@@ -142,9 +171,9 @@ async def query_next(_: Client, callback: CallbackQuery):
 
     response = user.get_response()
     buttons = user.get_data()
-    if not response:
+    if user.page - 1 == 1 or not response:
         response = user.respons[user.page] = api.get_resources(**user.query_args)
-        buttons = content_buttons(len(response["results"]))
+        buttons = content_buttons(len(response["results"])) if user.content == "DC" else []
         buttons.extend(user.get_buttons(response))
 
     await callback.edit_message_text(
@@ -156,6 +185,9 @@ async def query_next(_: Client, callback: CallbackQuery):
 @ProDil.on_callback_query(bot_filters.download)
 async def query_prev(client: Client, callback: CallbackQuery):
     user = user_list[callback.from_user.id]
+    if not user:
+        await user_not_exists(callback)
+        return
 
     await client.delete_messages(
         chat_id=callback.from_user.id,
