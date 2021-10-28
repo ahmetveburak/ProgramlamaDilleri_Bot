@@ -1,11 +1,11 @@
 from collections import defaultdict
+from math import ceil
 from typing import Dict
 
+from pyrogram.types import InlineKeyboardButton as InlineKB
 from pyrogram.types import User
 
 from prodil.utils.quest import quest
-from pyrogram.types import InlineKeyboardButton as InlineKB
-from math import ceil
 
 
 class UserNavigation(object):
@@ -35,6 +35,9 @@ class UserNavigation(object):
         last = self.query_order[idx + 1]
         if last == data:
             self.query[last].clear()
+            if data == "content":
+                self.page = 1
+                # self.respons = self.choices = {}
         else:
             self.query[question].append(data)
 
@@ -64,6 +67,8 @@ class UserNavigation(object):
         ]
         if download:
             buttons.append([InlineKB(text="Indir", callback_data="download")])
+
+        buttons.append([InlineKB(text="Geri", callback_data="content")])
 
         return buttons
 
