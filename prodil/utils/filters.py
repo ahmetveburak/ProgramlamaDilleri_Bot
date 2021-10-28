@@ -64,7 +64,7 @@ class ProDilFilters:
         return filters.create(lambda _, __, query: query.data == self.COMMON)
 
     @property
-    def downloads(self) -> Filter:
+    def connection(self) -> Filter:
         return filters.create(lambda _, __, query: query.data in ("BK", "DC", "LN"))
 
     @property
