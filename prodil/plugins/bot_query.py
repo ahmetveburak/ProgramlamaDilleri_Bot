@@ -6,7 +6,6 @@ from prodil.utils.botuser import UserNavigation, user_list
 from prodil.utils.filters import bot_filters
 from prodil.utils.helpers import button_toggle, command, user_not_exists
 from prodil.utils.quest import content_buttons, make_buttons, quest
-from prodil_client.client import api
 
 # TODO refactor repeated lines
 
@@ -116,10 +115,10 @@ async def query_connection(_: Client, callback: CallbackQuery):
     user.action(callback.data, quest.CONTENT)
 
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
-    response = user.respons[user.page] = api.get_resources(**user.query_args)
+    response = user.get_resources()
 
     buttons = content_buttons(len(response["results"])) if callback.data == "DC" else []
-    buttons.extend(user.get_buttons(response, callback.data == "DC"))
+    buttons.extend(user.get_buttons(response))
 
     text = user.parse_response()
     if text:
@@ -156,7 +155,7 @@ async def query_numbers(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.change)
 async def query_next(_: Client, callback: CallbackQuery):
-    user = user_list[callback.from_user.id]
+    user = user_list.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
@@ -172,7 +171,7 @@ async def query_next(_: Client, callback: CallbackQuery):
     response = user.get_response()
     buttons = user.get_data()
     if user.page - 1 == 1 or not response:
-        response = user.respons[user.page] = api.get_resources(**user.query_args)
+        response = user.get_resources()
         buttons = content_buttons(len(response["results"])) if user.content == "DC" else []
         buttons.extend(user.get_buttons(response))
 
@@ -184,7 +183,9 @@ async def query_next(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.download)
 async def query_prev(client: Client, callback: CallbackQuery):
-    user = user_list[callback.from_user.id]
+    user = user_list.get(callback.from_user.id)
+    user.set_page_data(callback.message.reply_markup.inline_keyboard)
+
     if not user:
         await user_not_exists(callback)
         return
@@ -194,11 +195,10 @@ async def query_prev(client: Client, callback: CallbackQuery):
         message_ids=[callback.message.message_id],
     )
     # TODO Send This Resources
-    user.get_resources()
     del user_list[user.id]
 
     await client.send_message(
         chat_id=callback.from_user.id,
-        text="text /startt",
+        text="Tekrar baslamak istersen /start komutunu calistirabilirsin.",
         reply_markup=ReplyKeyboardRemove(True),
     )
