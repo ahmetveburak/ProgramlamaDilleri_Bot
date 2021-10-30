@@ -11,6 +11,7 @@ from prodil_client.client import api
 
 class UserNavigation(object):
     query_order = (None, "category", "level", "local", "content", None)
+    CHECK = "🟢"
 
     def __init__(self, user: User):
         self.id = getattr(user, "id")
@@ -38,7 +39,6 @@ class UserNavigation(object):
             setattr(self, last, None)
             if data == "content":
                 self.page = 1
-                # self.respons = self.choices = {}
         else:
             setattr(self, question, data)
 
@@ -100,7 +100,7 @@ class UserNavigation(object):
         for page in pages:
             for buttons in self.choices.get(page)[:2]:
                 for button in buttons:
-                    if "🟢" in button.text:
+                    if self.CHECK in button.text:
                         selected_res[page].append(button.callback_data)
 
         result = []
