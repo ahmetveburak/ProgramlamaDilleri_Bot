@@ -125,6 +125,7 @@ async def query_connection(_: Client, callback: CallbackQuery):
         await callback.edit_message_text(
             text=text,
             reply_markup=InlineKeyboardMarkup(buttons),
+            disable_web_page_preview=True,
         )
 
     else:
@@ -150,6 +151,7 @@ async def query_numbers(_: Client, callback: CallbackQuery):
     await callback.edit_message_text(
         text=callback.message.text,
         reply_markup=callback.message.reply_markup,
+        disable_web_page_preview=True,
     )
 
 
@@ -178,6 +180,7 @@ async def query_next(_: Client, callback: CallbackQuery):
     await callback.edit_message_text(
         text=user.parse_response(),
         reply_markup=InlineKeyboardMarkup(buttons),
+        disable_web_page_preview=True,
     )
 
 

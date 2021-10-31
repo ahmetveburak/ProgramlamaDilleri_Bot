@@ -124,9 +124,29 @@ class UserNavigation(object):
         """
         Parse current page's json response to readable format.
         """
-        return "\n".join(
-            [f"{i}. {doc['name']}" for i, doc in enumerate(self.respons[self.page]["results"], start=1)],
-        )
+        result = []
+        for i, res in enumerate(self.respons[self.page]["results"], start=1):
+            res_name = f"{i}. {res['name']}"
+
+            if url := res.get("url"):
+                res_name = f"[{res_name}]({url})"
+
+            authors = ", ".join(
+                [
+                    f"[{author['full_name']}]({author['site']})"
+                    if author["site"]
+                    else f"{author['full_name']}"
+                    for author in res["author"]
+                ]
+            )
+            data = [f"**{res_name}**", f"__{authors}__"]
+
+            if note := f"{res['note']}":
+                data.append(f"__{note}__")
+
+            result.append("\n".join(data))
+
+        return "\n\n".join(result)
 
 
 user_list: Dict[int, UserNavigation] = {}
