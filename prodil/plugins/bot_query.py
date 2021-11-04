@@ -1,4 +1,7 @@
+import asyncio
+
 from pyrogram import Client
+from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
 
 from prodil.BotConfig import ProDil
@@ -192,6 +195,26 @@ async def query_prev(client: Client, callback: CallbackQuery):
     if not user:
         await user_not_exists(callback)
         return
+
+    for document in user.get_documents():
+        failed_docs = []
+        try:
+            await client.send_cached_media(
+                chat_id=user.id,
+                file_id=document["file_id"],
+            )
+        except MediaEmpty as err:
+            failed_docs.append(document["name"])
+            # TODO LOG
+            print(f"{err}: {document['name']} isimli dosya bozuk")
+
+        if len(failed_docs) > 0:
+            doc_names = "\n".join(failed_docs)
+            await callback.answer(
+                text=f"{doc_names}\nIsimli dosyalar gonderilirken sorun olustu. Durumu bildirmek icin: @musaitbiyerde"
+            )
+
+        await asyncio.sleep(5)
 
     await client.delete_messages(
         chat_id=callback.from_user.id,
