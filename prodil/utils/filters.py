@@ -20,17 +20,15 @@ class ProDilFilters:
 
     def _filter_list(self, question) -> List[str]:
         """
-        :param question: str For obtain related answer keys to create filter
+        :param question: str Set the button datas which trigger this callback
+        and append the data for turning back.
         :return: List[str] List of answer keys and additional previous question data
         """
         filter_data = list(quest.get_answer(question).keys())
 
         previous = {
-            self.NONE: self.CATEGORY,
-            self.CATEGORY: self.LEVEL,
-            self.LEVEL: self.LOCAL,
+            self.CATEGORY: self.LOCAL,
             self.LOCAL: self.CONTENT,
-            self.CONTENT: self.NONE,
         }
 
         filter_data.append(previous[question])
@@ -41,27 +39,15 @@ class ProDilFilters:
 
     @property
     def category(self) -> Filter:
-        return self._create_filter(self.NONE)
-
-    @property
-    def level(self) -> Filter:
-        return self._create_filter(self.CATEGORY)
+        return filters.create(lambda _, __, query: query.data == self.CATEGORY)
 
     @property
     def local(self) -> Filter:
-        return self._create_filter(self.LEVEL)
+        return self._create_filter(self.CATEGORY)
 
     @property
     def content(self) -> Filter:
         return self._create_filter(self.LOCAL)
-
-    @property
-    def start(self) -> Filter:
-        return filters.create(lambda _, __, query: query.data == self.CATEGORY)
-
-    @property
-    def common(self) -> Filter:
-        return filters.create(lambda _, __, query: query.data == self.COMMON)
 
     @property
     def connection(self) -> Filter:
