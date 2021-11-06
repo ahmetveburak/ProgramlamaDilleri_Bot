@@ -6,11 +6,11 @@ from pyrogram.types import InlineKeyboardButton as InlineKB
 from pyrogram.types import User
 
 from prodil.utils.quest import quest
-from prodil_client.client import api
+from prodil.BotConfig import api
 
 
 class UserNavigation(object):
-    query_order = (None, "category", "level", "local", "content", None)
+    query_order = (None, "category", "local", "content", None)
     CHECK = "🟢"
 
     def __init__(self, user: User):
@@ -31,7 +31,6 @@ class UserNavigation(object):
         self.content = None
 
     def action(self, data: str, question: str = None) -> None:
-        print(data)
 
         idx = self.query_order.index(question)
         last = self.query_order[idx + 1]
@@ -113,7 +112,6 @@ class UserNavigation(object):
     @property
     def query_args(self):
         return {
-            quest.LEVEL: self.level,
             quest.LOCAL: self.local,
             quest.CONTENT: self.content,
             quest.CATEGORY: self.category,

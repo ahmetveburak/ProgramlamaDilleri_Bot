@@ -1,6 +1,15 @@
 from pyrogram import Client
 from pyrogram.types import Message
 
+# TODO package and install from github
+from prodil_client.prodil_client.client import ProdilAPI
+
+api = ProdilAPI(
+        api_url="http://127.0.0.1:8000/api",
+        email="admin@admin.com",
+        password="1",
+    )
+
 
 class ProDil(Client, Message):
     OWNER_ID: int = 635568322
