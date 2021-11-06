@@ -39,8 +39,8 @@ async def start(client: Client, message: Message):
     )
 
 
-@ProDil.on_callback_query(bot_filters.start)
-async def query_start(_: Client, callback: CallbackQuery):
+@ProDil.on_callback_query(bot_filters.category)
+async def query_category(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
@@ -54,24 +54,6 @@ async def query_start(_: Client, callback: CallbackQuery):
     await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
 
 
-@ProDil.on_callback_query(bot_filters.level)
-async def query_level(_: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
-    user.action(callback.data, quest.CATEGORY)
-
-    question, answer = quest.get_choices(quest.LEVEL)
-    buttons = make_buttons(answer=answer, size=1, back=quest.CATEGORY)
-
-    await callback.edit_message_text(
-        text=question,
-        reply_markup=InlineKeyboardMarkup(buttons),
-    )
-
-
 @ProDil.on_callback_query(bot_filters.local)
 async def query_local(_: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
@@ -79,10 +61,10 @@ async def query_local(_: Client, callback: CallbackQuery):
         await user_not_exists(callback)
         return
 
-    user.action(callback.data, quest.LEVEL)
+    user.action(callback.data, quest.CATEGORY)
 
     question, answer = quest.get_choices(quest.LOCAL)
-    buttons = make_buttons(answer=answer, size=1, back=quest.LEVEL)
+    buttons = make_buttons(answer=answer, size=1, back=quest.CATEGORY)
 
     await callback.edit_message_text(
         text=question,
