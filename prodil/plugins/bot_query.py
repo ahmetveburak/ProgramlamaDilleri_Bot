@@ -51,8 +51,13 @@ async def query_category(_: Client, callback: CallbackQuery):
 
 
 @ProDil.on_callback_query(bot_filters.local)
-async def query_local(_: Client, callback: CallbackQuery):
+async def query_local(client: Client, callback: CallbackQuery):
     user = user_list.get(callback.from_user.id)
+
+    if user.start:
+        await client.delete_messages(chat_id=callback.message.chat.id, message_ids=(callback.message.message_id - 1,))
+        user.start = False
+
     if not user:
         await user_not_exists(callback)
         return

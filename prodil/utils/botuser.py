@@ -19,6 +19,7 @@ class UserNavigation(object):
         self.first_name = getattr(user, "first_name")
         self.last_name = getattr(user, "last_name")
 
+        self.start = True
         self.page = 1
         self.all_page = 0
 

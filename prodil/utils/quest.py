@@ -2,42 +2,40 @@ from typing import Dict, List, Tuple, Union
 
 from pyrogram.types import InlineKeyboardButton as InlineKB
 
+from prodil.BotConfig import api
+
+
+class Local:
+    QUESTION = "Kaynaklar için dil tercihin?"
+    ANSWER = {
+        "TR": "Yalnızca Türkçe kaynaklar",
+        "EN": "Yalnızca İngilizce kaynaklar",
+        "__": "Hem Türkçe hem İngilizce kaynaklar",
+    }
+
+
+class Content:
+    QUESTION = "Nasıl bir kaynak arıyorsun?"
+    ANSWER = {
+        # "BK": "Kitap Önerileri",
+        "DC": "İndirilebilen Kaynaklar",
+        "LN": "Videolar ve Faydalı Linkler",
+    }
+
+
+class Category:
+    QUESTION = "Hangi programlama dili ile ilgileniyorsun?"
+
+    @property
+    def ANSWER(self):
+        categories = api.get_categories()
+        return {i["name"]: i["name"] for i in categories}
+
 
 class Question:
-    class Level:
-        QUESTION = "Hangi seviyede kaynak arıyorsun?"
-        ANSWER = {
-            "BGN": "Başlangıç",
-            "EXP": "Orta",
-            "PRO": "İleri",
-        }
-
-    class Local:
-        QUESTION = "Kaynaklar için dil tercihin?"
-        ANSWER = {
-            "TR": "Yalnızca Türkçe kaynaklar",
-            "EN": "Yalnızca İngilizce kaynaklar",
-            "__": "Hem Türkçe hem İngilizce kaynaklar",
-        }
-
-    class Content:
-        QUESTION = "Nasıl bir kaynak arıyorsun?"
-        ANSWER = {
-            # "BK": "Kitap Önerileri",
-            "DC": "İndirilebilen Kaynaklar",
-            "LN": "Videolar ve Faydalı Linkler",
-        }
-
-    class Category:
-        QUESTION = "Hangi programlama dili ile ilgileniyorsun?"
-        ANSWER = {
-            "C": "C",
-            "C++": "C++",
-            "Python": "Python",
-            "Java": "Java",
-            "C#": "C#",
-            "Genel": "Genel",
-        }
+    Local = Local()
+    Content = Content()
+    Category = Category()
 
     LEVEL = "level"
     LOCAL = "local"
@@ -52,6 +50,9 @@ class Question:
 
     def get_choices(self, question: str) -> Tuple[str, Dict[str, str]]:
         return self.get_question(question), self.get_answer(question)
+
+    def get_categories(self):
+        return self.Category.QUESTION, self.Category.answer()
 
 
 quest = Question()
