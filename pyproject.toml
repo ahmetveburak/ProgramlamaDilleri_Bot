@@ -9,7 +9,6 @@ python = "^3.8"
 python-decouple = "^3.3"
 pyrogram = "*"
 tgcrypto = "*"
-psycopg2-binary = "^2.8.6"
 requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
