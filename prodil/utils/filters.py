@@ -16,7 +16,6 @@ class ProDilFilters:
     LOCAL = "local"
     CONTENT = "content"
     COMMON = "Genel"
-    NONE = "none"
 
     def _filter_list(self, question) -> List[str]:
         """

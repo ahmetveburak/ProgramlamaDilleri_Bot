@@ -9,6 +9,7 @@ from prodil.utils.botuser import UserNavigation, user_list
 from prodil.utils.filters import bot_filters
 from prodil.utils.helpers import button_toggle, command, user_not_exists
 from prodil.utils.quest import content_buttons, make_buttons, quest
+from prodil.utils.messages import Text
 
 # TODO refactor repeated lines
 
@@ -23,12 +24,7 @@ async def start(client: Client, message: Message):
 
     await client.send_message(
         chat_id=message.chat.id,
-        text=f"__Hoşgeldin__ **{message.from_user.first_name}** __, "
-        f"bu bot henüz geliştirme aşamasındadır. "
-        f"Bu sebeple kaynak altyapısı sınırlı seviyededir. "
-        f"Önerebileceğin kaynaklar varsa__ /hakkinda __kısmından bize ulaşabilir, "
-        f"botun kullanımı sırasında bir sorunla karşılaşırsan tekrardan"
-        f"__ /start __komutunu çalıştırabilirsin.__",
+        text=Text.WELCOME % {"first_name": message.from_user.first_name},
         reply_markup=ReplyKeyboardRemove(True),
     )
 
@@ -115,7 +111,7 @@ async def query_connection(_: Client, callback: CallbackQuery):
 
     else:
         await callback.answer(
-            text="Bu alanda henuz kaynak bulunmamaktadir.",
+            text=Text.NO_RESOURCE,
             show_alert=True,
         )
 
@@ -192,9 +188,7 @@ async def query_prev(client: Client, callback: CallbackQuery):
 
         if len(failed_docs) > 0:
             doc_names = "\n".join(failed_docs)
-            await callback.answer(
-                text=f"{doc_names}\nIsimli dosyalar gonderilirken sorun olustu. Durumu bildirmek icin: @musaitbiyerde"
-            )
+            await callback.answer(text=Text.ERROR_RESOURCE % {"doc_names": doc_names})
 
         await asyncio.sleep(5)
 
@@ -207,6 +201,6 @@ async def query_prev(client: Client, callback: CallbackQuery):
 
     await client.send_message(
         chat_id=callback.from_user.id,
-        text="Tekrar baslamak istersen /start komutunu calistirabilirsin.",
+        text=Text.RESTART,
         reply_markup=ReplyKeyboardRemove(True),
     )
