@@ -17,10 +17,10 @@ class ProDilFilters:
     CONTENT = "content"
     COMMON = "Genel"
 
-    def _filter_list(self, question) -> List[str]:
+    def _filter_list(self, question:str) -> List[str]:
         """
-        :param question: str Set the button datas which trigger this callback
-        and append the data for turning back.
+        :param question: str Set the button datas which trigger the callback
+        and append the pervious question data.
         :return: List[str] List of answer keys and additional previous question data
         """
         filter_data = list(quest.get_answer(question).keys())
@@ -68,9 +68,10 @@ class ProDilFilters:
     def change(self) -> Filter:
         return filters.create(lambda _, __, query: query.data in ["next", "prev"])
 
-    @property
-    def download(self) -> Filter:
-        return filters.create(lambda _, __, query: query.data == "download")
+    download = filters.create(lambda _, __, query: query.data == "download")
+
+    def lock_download(self):
+        self.download = None
 
 
 bot_filters = ProDilFilters()

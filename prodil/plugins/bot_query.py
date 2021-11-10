@@ -1,6 +1,8 @@
 import asyncio
+from contextlib import suppress
 
 from pyrogram import Client
+from pyrogram.errors import MessageNotModified
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
 
@@ -8,8 +10,8 @@ from prodil.BotConfig import ProDil
 from prodil.utils.botuser import UserNavigation, user_list
 from prodil.utils.filters import bot_filters
 from prodil.utils.helpers import button_toggle, command, user_not_exists
-from prodil.utils.quest import content_buttons, make_buttons, quest
 from prodil.utils.messages import Text
+from prodil.utils.quest import content_buttons, make_buttons, quest
 
 # TODO refactor repeated lines
 
@@ -67,10 +69,11 @@ async def query_local(client: Client, callback: CallbackQuery):
     question, answer = quest.get_choices(quest.LOCAL)
     buttons = make_buttons(answer=answer, size=1, back=quest.CATEGORY)
 
-    await callback.edit_message_text(
-        text=question,
-        reply_markup=InlineKeyboardMarkup(buttons),
-    )
+    with suppress(MessageNotModified):
+        await callback.edit_message_text(
+            text=question,
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
 
 
 @ProDil.on_callback_query(bot_filters.content)
@@ -85,10 +88,11 @@ async def query_content(_: Client, callback: CallbackQuery):
     question, answer = quest.get_choices(quest.CONTENT)
     buttons = make_buttons(answer=answer, size=1, back=quest.LOCAL)
 
-    await callback.edit_message_text(
-        text=question,
-        reply_markup=InlineKeyboardMarkup(buttons),
-    )
+    with suppress(MessageNotModified):
+        await callback.edit_message_text(
+            text=question,
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
 
 
 @ProDil.on_callback_query(bot_filters.connection)
@@ -107,18 +111,19 @@ async def query_connection(_: Client, callback: CallbackQuery):
     buttons.extend(user.get_buttons(response))
 
     text = user.parse_response()
-    if text:
-        await callback.edit_message_text(
-            text=text,
-            reply_markup=InlineKeyboardMarkup(buttons),
-            disable_web_page_preview=True,
-        )
+    with suppress(MessageNotModified):
+        if text:
+            await callback.edit_message_text(
+                text=text,
+                reply_markup=InlineKeyboardMarkup(buttons),
+                disable_web_page_preview=True,
+            )
 
-    else:
-        await callback.answer(
-            text=Text.NO_RESOURCE,
-            show_alert=True,
-        )
+        else:
+            await callback.answer(
+                text=Text.NO_RESOURCE,
+                show_alert=True,
+            )
 
 
 @ProDil.on_callback_query(bot_filters.numbers)
@@ -134,11 +139,12 @@ async def query_numbers(_: Client, callback: CallbackQuery):
     markup = callback.message.reply_markup.inline_keyboard
     button_toggle(markup[x][y])
 
-    await callback.edit_message_text(
-        text=callback.message.text,
-        reply_markup=callback.message.reply_markup,
-        disable_web_page_preview=True,
-    )
+    with suppress(MessageNotModified):
+        await callback.edit_message_text(
+            text=callback.message.text,
+            reply_markup=callback.message.reply_markup,
+            disable_web_page_preview=True,
+        )
 
 
 @ProDil.on_callback_query(bot_filters.change)
@@ -163,21 +169,23 @@ async def query_next(_: Client, callback: CallbackQuery):
         buttons = content_buttons(len(response["results"])) if user.content == "DC" else []
         buttons.extend(user.get_buttons(response))
 
-    await callback.edit_message_text(
-        text=user.parse_response(),
-        reply_markup=InlineKeyboardMarkup(buttons),
-        disable_web_page_preview=True,
-    )
+    with suppress(MessageNotModified):
+        await callback.edit_message_text(
+            text=user.parse_response(),
+            reply_markup=InlineKeyboardMarkup(buttons),
+            disable_web_page_preview=True,
+        )
 
 
 @ProDil.on_callback_query(bot_filters.download)
 async def query_prev(client: Client, callback: CallbackQuery):
+    bot_filters.lock_download()
     user = user_list.get(callback.from_user.id)
-    user.set_page_data(callback.message.reply_markup.inline_keyboard)
-
     if not user:
         await user_not_exists(callback)
         return
+
+    user.set_page_data(callback.message.reply_markup.inline_keyboard)
 
     for document in user.get_documents():
         failed_docs = []
@@ -190,6 +198,7 @@ async def query_prev(client: Client, callback: CallbackQuery):
             failed_docs.append(document["name"])
             # TODO LOG
             print(f"{err}: {document['name']} isimli dosya bozuk")
+            continue
 
         if len(failed_docs) > 0:
             doc_names = "\n".join(failed_docs)
@@ -201,8 +210,9 @@ async def query_prev(client: Client, callback: CallbackQuery):
         chat_id=callback.from_user.id,
         message_ids=[callback.message.message_id],
     )
-    # TODO Send This Resources
-    del user_list[user.id]
+
+    with suppress(KeyError):
+        del user_list[user.id]
 
     await client.send_message(
         chat_id=callback.from_user.id,
