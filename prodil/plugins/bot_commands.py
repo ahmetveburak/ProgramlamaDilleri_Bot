@@ -1,22 +1,28 @@
-from functools import partial
-from pyrogram import filters, Client
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from prodil.BotConfig import ProDil
+import asyncio
 
-command = partial(filters.command, prefixes="/")
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+
+from prodil.BotConfig import ProDil
+from prodil.utils.helpers import command
+from prodil_client.client import api
 
 
 @ProDil.on_message(command("hakkinda") & filters.private)
-async def test(client: Client, message: Message):
-
+async def bot_about(client: Client, message: Message):
     await client.send_message(
         chat_id=message.chat.id,
-        text="Bu bot kâr amacı güdülmeksizin, faydalı olabilecek kaynakların kolayca ulaşılabilir olması için geliştirilmiştir. Burada bulunmasının iyi olacağını düşündüğünüz kaynaklar var ise geliştiricilere iletebilirsiniz.\n\n__Mühendis Köyü kanalımıza katılabilirsiniz.__",
+        text=(
+            "Bu bot kâr amacı güdülmeksizin, faydalı olabilecek kaynakların "
+            "kolayca ulaşılabilir olması için geliştirilmiştir. "
+            "Burada bulunmasının iyi olacağını düşündüğünüz "
+            "kaynaklar var ise geliştiricilere iletebilirsiniz."
+            "\n\n__Mühendis Köyü kanalımıza katılabilirsiniz.__"
+        ),
         reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton("@musaitbiyerde", url="https://t.me/musaitbiyerde"),
-                    InlineKeyboardButton("@tayyizaman", url="https://t.me/tayyizaman"),
                 ],
                 [InlineKeyboardButton("Mühendis Köyü", url="https://t.me/koyumuhendis")],
                 [
@@ -30,17 +36,18 @@ async def test(client: Client, message: Message):
     )
 
 
-@ProDil.on_message(command("oneri") & filters.private)
-async def new_suggestion(client: Client, message: Message):
-
-    await client.send_message(
-        chat_id=message.chat.id,
-        text="Kaynak önerisinde bulunmak için kaynak formunu doldurarak yeni kaynak önerisinde bulunabilirsin. Önereceğin kaynaklar en kısa zamanda listeye eklenecektir. Botu gelişmesinde katkıda bulunduğun için teşekkür ederiz.",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Kaynak Ekleme Formu", url="https://forms.gle/bgoVUXKU81d1Cj5y6"),
-                ],
-            ]
-        ),
+@ProDil.on_message(filters.me & filters.media & filters.private)
+async def bot_file_update(_: Client, message: Message):
+    update = api.update_resource(
+        file_name=message.document.file_name,
+        file_size=message.document.file_size,
+        file_id=message.document.file_id,
     )
+
+    text = "Dosya guncellenemedi."
+    if update.status_code == 200:
+        text = "Dosya basariyla guncellendi"
+
+    reply_message = await message.reply_text(text=f"`{text}`")
+    await asyncio.sleep(3)
+    await reply_message.delete()
