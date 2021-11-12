@@ -7,8 +7,8 @@ authors = ["ahmetveburak <https://t.me/musaitbiyerde>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 python-decouple = "^3.3"
-pyrogram = "*"
-tgcrypto = "*"
+Pyrogram = "^1.2.9"
+TgCrypto = "^1.2.2"
 requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
