@@ -1,26 +1,38 @@
 # Programlama Dilleri Telegram Botu
-Telegram'da birçok yazılım grubunda tekrar tekrar paylaşılan kaynakları ve dahasını bir araya toplayarak kaynakları daha ulaşılabilir hale getirmeyi hedeflediğimiz Programlama Dilleri Botu'dur. Bota ulaşmak için -> [Programlama Dilleri](https://t.me/programlama_bot). _Geliştirme aşaması devam etmektedir._
 
-## Projeyi çalıştırmak için yapılması gerekenler
+Telegram'da birçok yazılım grubunda tekrar tekrar paylaşılan kaynakları ve dahasını
+bir araya toplayarak kaynakların daha ulaşılabilir olmasin icin gelistirilmistir.
+[Programlama Dilleri](https://t.me/programlama_bot)
+  
+## Hakkinda
+API baglantisi eklendikten sonra proje dogrudan calismamaktadir.
+[Programlama Dilleri API](https://github.com/ahmetveburak/ProgramlamaDilleri_API)
+projesi kullanilarak calistirilabilir. Botun test edilmesi ve kullanilabilmesi icin
+hazir kaynak verisi de eklenmistir fakat ayri bir sekilde calistirmak icin yeterli degildir.
+Projenin paylasim amaci kopya bir kaynak botu olusturulmasi yerine 
+kendimce uyguladigim menu/navigasyon yapisini best practice olmasa da oneri olarak
+paylasmaktir :)
+  
+Her ne kadar durumdan hosnut olmasam da bot icerisinde ucretli kaynaklar da paylasilmaktadir.
+Bu kaynaklar arasinda Turkce icerik var ise bildirmeniz yeterlidir fakat su an 1 USD = 10 TL
+oldugu durumda yabanci iceriklerin tolere edilebilecegini dusunuyorum (onerilere acigim).
+  
+Gerekli bagimliliklar ve API kurulduktan sonra bot calistirilmadan once API calistirilmalidir.
+`prodil.ini` dosyasinda gerekli konfigurasyon bilgileri doldurulup bot kullanilabilir.
+```shell
+python -m prodil
+```
 
-`git clone https://github.com/ahmetveburak/ProgramlamaDilleri.git`
+## Guncellemeler
+_(Ilk yaptigim vasat(:D) adimlari hatirlamiyorum fakat son eklemeleri belirtmek iyi olabilir.)_
 
-`cd ProgramlamaDilleri`
+### _Kasim 2021_
+- Bot dogrudan bir veritabani kullanmak yerine kaynak yonetimini daha pratik
+bir sekilde yapabilmek icin Django REST API ile entegre bir sekilde calisir hale getirildi.
+- Butun kaynaklar tek seferde listelenmek yerine sayfalara ayirildi.
+- Indirilmek istenen kaynaklar sira numarasi yerine buton ile secilir hale getirildi.
 
-`python -m venv .venv`
+### ???? 2020
+- Kaynaklari yonetebilmek icin Django entegre edildi.
 
-* Poetry Kurulu ise
-
-`poetry install`
-
-`poetry shell`
-
-* Poetry Kurulu değil ise (_İsteğe kağlı kurmak için_ -> [Python Poetry](https://python-poetry.org/docs/#installation))
-
-`source .venv/bin/activate`
-
-`pip install -r requirements.txt`
-
-* Botu çalıştırmak için
-
-`python -m prodil`
+Proje her turlu gorus ve oneriye acik olup bu yazdiklarimin muhtemelen okunmayacagi dusunulmektedir :D 
