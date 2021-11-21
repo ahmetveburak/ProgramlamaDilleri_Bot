@@ -5,8 +5,8 @@ from typing import Dict, List
 from pyrogram.types import InlineKeyboardButton as InlineKB
 from pyrogram.types import User
 
-from prodil.utils.quest import quest
 from prodil.BotConfig import api
+from prodil.utils.quest import quest
 
 
 class UserNavigation(object):
@@ -132,9 +132,7 @@ class UserNavigation(object):
 
             authors = ", ".join(
                 [
-                    f"[{author['full_name']}]({author['site']})"
-                    if author["site"]
-                    else f"{author['full_name']}"
+                    f"[{author['full_name']}]({author['site']})" if author["site"] else f"{author['full_name']}"
                     for author in res["author"]
                 ]
             )

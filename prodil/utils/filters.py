@@ -17,7 +17,7 @@ class ProDilFilters:
     CONTENT = "content"
     COMMON = "Genel"
 
-    def _filter_list(self, question:str) -> List[str]:
+    def _filter_list(self, question: str) -> List[str]:
         """
         :param question: str Set the button datas which trigger the callback
         and append the pervious question data.

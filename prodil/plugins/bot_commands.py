@@ -3,7 +3,7 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from prodil.BotConfig import ProDil
+from prodil.BotConfig import ProDil, api
 from prodil.utils.helpers import command
 
 
