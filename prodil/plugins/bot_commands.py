@@ -5,7 +5,6 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from prodil.BotConfig import ProDil
 from prodil.utils.helpers import command
-from prodil_client.client import api
 
 
 @ProDil.on_message(command("hakkinda") & filters.private)
