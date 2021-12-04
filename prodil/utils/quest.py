@@ -26,10 +26,15 @@ class Content:
 class Category:
     QUESTION = "Hangi programlama dili ile ilgileniyorsun?"
 
+    def __init__(self):
+        self.categories = api.get_categories()
+
+    def update_answers(self):
+        self.categories = api.get_categories()
+
     @property
     def ANSWER(self):
-        categories = api.get_categories()
-        return {i["name"]: i["name"] for i in categories}
+        return {i["name"]: i["name"] for i in self.categories}
 
 
 class Question:
@@ -50,9 +55,6 @@ class Question:
 
     def get_choices(self, question: str) -> Tuple[str, Dict[str, str]]:
         return self.get_question(question), self.get_answer(question)
-
-    def get_categories(self):
-        return self.Category.QUESTION, self.Category.answer()
 
 
 quest = Question()

@@ -21,6 +21,7 @@ async def start(client: Client, message: Message):
     user = UserNavigation(message.from_user)
     user_list[user.id] = user
 
+    quest.Category.update_answers()
     question, answer = quest.get_choices(quest.CATEGORY)
     buttons = make_buttons(answer=answer, size=3, back=False)
 
