@@ -200,6 +200,11 @@ async def query_prev(client: Client, callback: CallbackQuery):
             # TODO LOG
             print(f"{err}: {document['name']} isimli dosya bozuk")
             continue
+        except ValueError as err:
+            failed_docs.append(document["name"])
+            # TODO LOG
+            print(f"{err}: {document['name']} ID mevcut degil veya suresi gecti")
+            continue
 
         if len(failed_docs) > 0:
             doc_names = "\n".join(failed_docs)
