@@ -35,17 +35,20 @@ async def bot_about(client: Client, message: Message):
     )
 
 
-@ProDil.on_message(filters.me & filters.media & filters.private)
+@ProDil.on_message(filters.document & filters.private)
 async def bot_file_update(_: Client, message: Message):
-    update = api.update_resource(
+    caption = getattr(message, "caption")
+    create = api.create_resource(
+        name=message.caption if caption else message.document.file_name,
         file_name=message.document.file_name,
         file_size=message.document.file_size,
         file_id=message.document.file_id,
+        file_unique_id=message.document.file_unique_id,
     )
 
-    text = "Dosya guncellenemedi."
-    if update.status_code == 200:
-        text = "Dosya basariyla guncellendi"
+    text = "Dosya oluşturulurken veya güncellenirken bir hata oluştu."
+    if create.status_code == 201:
+        text = "Dosya başarıyla oluşturuldu veya güncellendi."
 
     reply_message = await message.reply_text(text=f"`{text}`")
     await asyncio.sleep(3)

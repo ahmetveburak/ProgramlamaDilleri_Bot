@@ -82,3 +82,13 @@ class ProdilAPI(object):
             "file_id": file_id,
         }
         self.session.put(url=f"{self.API_BASE_URL}/{self.FILE_UPDATE_PATH}/{file_name}/", json=payload)
+
+    def create_resource(self, name, file_name, file_id, file_unique_id, file_size):
+        payload = {
+            "name": name,
+            "file_name": file_name,
+            "file_id": file_id,
+            "file_unique_id": file_unique_id,
+            "file_size": file_size,
+        }
+        return self.session.post(url=f"{self.API_BASE_URL}/resources/", json=payload)
