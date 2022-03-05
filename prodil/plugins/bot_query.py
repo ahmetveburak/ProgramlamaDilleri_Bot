@@ -7,22 +7,21 @@ from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
 
 from prodil.BotConfig import ProDil
-from prodil.utils.botuser import UserNavigation, user_list
+from prodil.utils.botuser import UserNavigation, USERS
 from prodil.utils.filters import bot_filters
 from prodil.utils.helpers import button_toggle, command, user_not_exists
 from prodil.utils.messages import Text
-from prodil.utils.quest import content_buttons, make_buttons, quest
+from prodil.utils.quest import content_buttons, make_buttons, questions
 
 # TODO refactor repeated lines
 
 
 @ProDil.on_message(command("start"))
 async def start(client: Client, message: Message):
-    user = UserNavigation(message.from_user)
-    user_list[user.id] = user
+    user = USERS[user.id] = UserNavigation(message.from_user)
 
-    quest.Category.update_answers()
-    question, answer = quest.get_choices(quest.CATEGORY)
+    questions.update_answers()
+    question, answer = questions.get_choices(questions.CATEGORY)
     buttons = make_buttons(answer=answer, size=3, back=False)
 
     await client.send_message(
@@ -40,14 +39,14 @@ async def start(client: Client, message: Message):
 
 @ProDil.on_callback_query(bot_filters.category)
 async def query_category(_: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
 
     user.action(callback.data)
 
-    question, answer = quest.get_choices(quest.CATEGORY)
+    question, answer = questions.get_choices(questions.CATEGORY)
     buttons = make_buttons(answer=answer, size=3, back=False)
 
     await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
@@ -55,7 +54,7 @@ async def query_category(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.local)
 async def query_local(client: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
 
     if user.start:
         await client.delete_messages(chat_id=callback.message.chat.id, message_ids=(callback.message.message_id - 1,))
@@ -65,10 +64,10 @@ async def query_local(client: Client, callback: CallbackQuery):
         await user_not_exists(callback)
         return
 
-    user.action(callback.data, quest.CATEGORY)
+    user.action(callback.data, questions.CATEGORY)
 
-    question, answer = quest.get_choices(quest.LOCAL)
-    buttons = make_buttons(answer=answer, size=1, back=quest.CATEGORY)
+    question, answer = questions.get_choices(questions.LOCAL)
+    buttons = make_buttons(answer=answer, size=1, back=questions.CATEGORY)
 
     with suppress(MessageNotModified):
         await callback.edit_message_text(
@@ -79,15 +78,15 @@ async def query_local(client: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.content)
 async def query_content(_: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
 
-    user.action(callback.data, quest.LOCAL)
+    user.action(callback.data, questions.LOCAL)
 
-    question, answer = quest.get_choices(quest.CONTENT)
-    buttons = make_buttons(answer=answer, size=1, back=quest.LOCAL)
+    question, answer = questions.get_choices(questions.CONTENT)
+    buttons = make_buttons(answer=answer, size=1, back=questions.LOCAL)
 
     with suppress(MessageNotModified):
         await callback.edit_message_text(
@@ -98,12 +97,12 @@ async def query_content(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.connection)
 async def query_connection(_: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
 
-    user.action(callback.data, quest.CONTENT)
+    user.action(callback.data, questions.CONTENT)
 
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
     response = user.get_resources()
@@ -129,7 +128,7 @@ async def query_connection(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.numbers)
 async def query_numbers(_: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
@@ -150,7 +149,7 @@ async def query_numbers(_: Client, callback: CallbackQuery):
 
 @ProDil.on_callback_query(bot_filters.change)
 async def query_next(_: Client, callback: CallbackQuery):
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
@@ -181,7 +180,7 @@ async def query_next(_: Client, callback: CallbackQuery):
 @ProDil.on_callback_query(bot_filters.download)
 async def query_prev(client: Client, callback: CallbackQuery):
     bot_filters.lock_download()
-    user = user_list.get(callback.from_user.id)
+    user = USERS.get(callback.from_user.id)
     if not user:
         await user_not_exists(callback)
         return
@@ -218,7 +217,7 @@ async def query_prev(client: Client, callback: CallbackQuery):
     )
 
     with suppress(KeyError):
-        del user_list[user.id]
+        del USERS[user.id]
 
     await client.send_message(
         chat_id=callback.from_user.id,

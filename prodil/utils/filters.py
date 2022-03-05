@@ -3,7 +3,7 @@ from typing import List
 from pyrogram import filters
 from pyrogram.filters import Filter
 
-from prodil.utils.quest import quest
+from prodil.utils import questions
 
 
 class ProDilFilters:
@@ -23,7 +23,7 @@ class ProDilFilters:
         and append the pervious question data.
         :return: List[str] List of answer keys and additional previous question data
         """
-        filter_data = list(quest.get_answer(question).keys())
+        filter_data = list(questions.get_answer(question).keys())
 
         previous = {
             self.CATEGORY: self.LOCAL,

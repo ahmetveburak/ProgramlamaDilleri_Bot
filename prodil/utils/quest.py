@@ -38,9 +38,9 @@ class Category:
 
 
 class Question:
-    Local = Local()
-    Content = Content()
-    Category = Category()
+    local = Local()
+    content = Content()
+    category = Category()
 
     LEVEL = "level"
     LOCAL = "local"
@@ -56,8 +56,11 @@ class Question:
     def get_choices(self, question: str) -> Tuple[str, Dict[str, str]]:
         return self.get_question(question), self.get_answer(question)
 
+    def update_answers(self):
+        self.category.update_answers()
 
-quest = Question()
+
+questions = Question()
 
 
 def slicer(button_list: List[InlineKB], size: int) -> List[List[InlineKB]]:

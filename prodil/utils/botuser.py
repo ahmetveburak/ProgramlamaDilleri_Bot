@@ -6,7 +6,7 @@ from pyrogram.types import InlineKeyboardButton as InlineKB
 from pyrogram.types import User
 
 from prodil.BotConfig import api
-from prodil.utils.quest import quest
+from prodil.utils.quest import questions
 
 
 class UserNavigation(object):
@@ -113,9 +113,9 @@ class UserNavigation(object):
     @property
     def query_args(self):
         return {
-            quest.LOCAL: self.local,
-            quest.CONTENT: self.content,
-            quest.CATEGORY: self.category,
+            questions.LOCAL: self.local,
+            questions.CONTENT: self.content,
+            questions.CATEGORY: self.category,
             "page": self.page,
         }
 
@@ -146,4 +146,4 @@ class UserNavigation(object):
         return "\n\n".join(result)
 
 
-user_list: Dict[int, UserNavigation] = {}
+USERS: Dict[int, UserNavigation] = {}
