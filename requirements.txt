@@ -1,11 +1,10 @@
-async-lru==1.0.2; python_version >= "3.6" and python_version < "4.0"
 certifi==2021.10.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
-charset-normalizer==2.0.9; python_full_version >= "3.6.0" and python_version >= "3"
+charset-normalizer==2.0.12; python_full_version >= "3.6.0" and python_version >= "3"
 idna==3.3; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
 pyaes==1.6.1; python_version >= "3.6" and python_version < "4.0"
-pyrogram==1.2.11; python_version >= "3.6" and python_version < "4.0"
+pyrogram==1.4.8; python_version >= "3.6" and python_version < "4.0"
 pysocks==1.7.1; python_version >= "3.6" and python_full_version < "3.0.0" and python_version < "4.0" or python_version >= "3.6" and python_version < "4.0" and python_full_version >= "3.4.0"
-python-decouple==3.5
-requests==2.26.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
-tgcrypto==1.2.2; python_version >= "3.6" and python_version < "4.0"
-urllib3==1.26.7; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version < "4"
+python-decouple==3.6
+requests==2.27.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
+tgcrypto==1.2.3; python_version >= "3.6" and python_version < "4.0"
+urllib3==1.26.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version < "4"
