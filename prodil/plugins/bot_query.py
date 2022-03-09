@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from contextlib import suppress
 
 from pyrogram import Client
@@ -7,13 +8,13 @@ from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
 
 from prodil.BotConfig import ProDil
-from prodil.utils.botuser import UserNavigation, USERS
+from prodil.utils.botuser import USERS, UserNavigation
 from prodil.utils.filters import bot_filters
-from prodil.utils.helpers import button_toggle, command, user_not_exists
+from prodil.utils.helpers import button_toggle, command, is_active_user
 from prodil.utils.messages import Text
 from prodil.utils.quest import content_buttons, make_buttons, questions
 
-# TODO refactor repeated lines
+logger = logging.getLogger(__name__)
 
 
 @ProDil.on_message(command("start"))
@@ -37,13 +38,9 @@ async def start(client: Client, message: Message):
     )
 
 
-@ProDil.on_callback_query(bot_filters.category)
+@ProDil.on_callback_query(bot_filters.category & is_active_user)
 async def query_category(_: Client, callback: CallbackQuery):
     user = USERS.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
     user.action(callback.data)
 
     question, answer = questions.get_choices(questions.CATEGORY)
@@ -52,17 +49,13 @@ async def query_category(_: Client, callback: CallbackQuery):
     await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
 
 
-@ProDil.on_callback_query(bot_filters.local)
+@ProDil.on_callback_query(bot_filters.local & is_active_user)
 async def query_local(client: Client, callback: CallbackQuery):
     user = USERS.get(callback.from_user.id)
 
     if user.start:
         await client.delete_messages(chat_id=callback.message.chat.id, message_ids=(callback.message.message_id - 1,))
         user.start = False
-
-    if not user:
-        await user_not_exists(callback)
-        return
 
     user.action(callback.data, questions.CATEGORY)
 
@@ -76,13 +69,9 @@ async def query_local(client: Client, callback: CallbackQuery):
         )
 
 
-@ProDil.on_callback_query(bot_filters.content)
+@ProDil.on_callback_query(bot_filters.content & is_active_user)
 async def query_content(_: Client, callback: CallbackQuery):
     user = USERS.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
     user.action(callback.data, questions.LOCAL)
 
     question, answer = questions.get_choices(questions.CONTENT)
@@ -95,13 +84,9 @@ async def query_content(_: Client, callback: CallbackQuery):
         )
 
 
-@ProDil.on_callback_query(bot_filters.connection)
+@ProDil.on_callback_query(bot_filters.connection & is_active_user)
 async def query_connection(_: Client, callback: CallbackQuery):
     user = USERS.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
     user.action(callback.data, questions.CONTENT)
 
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
@@ -126,13 +111,8 @@ async def query_connection(_: Client, callback: CallbackQuery):
             )
 
 
-@ProDil.on_callback_query(bot_filters.numbers)
+@ProDil.on_callback_query(bot_filters.numbers & is_active_user)
 async def query_numbers(_: Client, callback: CallbackQuery):
-    user = USERS.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
     selected = int(callback.data) - 1
     x, y = int(selected / 4), int(selected % 4)
 
@@ -147,13 +127,9 @@ async def query_numbers(_: Client, callback: CallbackQuery):
         )
 
 
-@ProDil.on_callback_query(bot_filters.change)
+@ProDil.on_callback_query(bot_filters.change & is_active_user)
 async def query_next(_: Client, callback: CallbackQuery):
     user = USERS.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
     is_next = callback.data == "next"
 
@@ -177,14 +153,10 @@ async def query_next(_: Client, callback: CallbackQuery):
         )
 
 
-@ProDil.on_callback_query(bot_filters.download)
+@ProDil.on_callback_query(bot_filters.download & is_active_user)
 async def query_prev(client: Client, callback: CallbackQuery):
     bot_filters.lock_download()
     user = USERS.get(callback.from_user.id)
-    if not user:
-        await user_not_exists(callback)
-        return
-
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
 
     for document in user.get_documents():
@@ -196,13 +168,11 @@ async def query_prev(client: Client, callback: CallbackQuery):
             )
         except MediaEmpty as err:
             failed_docs.append(document["name"])
-            # TODO LOG
-            print(f"{err}: {document['name']} isimli dosya bozuk")
+            logger.error(f"{err}: {document['name']} isimli dosya bozuk")
             continue
         except ValueError as err:
             failed_docs.append(document["name"])
-            # TODO LOG
-            print(f"{err}: {document['name']} ID mevcut degil veya suresi gecti")
+            logger.error(f"{err}: {document['name']} ID mevcut degil veya suresi gecti")
             continue
 
         if len(failed_docs) > 0:

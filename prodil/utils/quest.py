@@ -48,10 +48,10 @@ class Question:
     CATEGORY = "category"
 
     def get_question(self, question: str) -> str:
-        return getattr(self, question.title()).QUESTION
+        return getattr(self, question).QUESTION
 
     def get_answer(self, question: str) -> Dict[str, str]:
-        return getattr(self, question.title()).ANSWER
+        return getattr(self, question).ANSWER
 
     def get_choices(self, question: str) -> Tuple[str, Dict[str, str]]:
         return self.get_question(question), self.get_answer(question)
