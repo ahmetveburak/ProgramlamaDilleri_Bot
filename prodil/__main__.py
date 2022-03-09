@@ -1,14 +1,22 @@
 import logging
-
-from decouple import config
+from os import makedirs
+from os.path import join
 
 from prodil.BotConfig import ProDil
 
-# RUNTIME DEBUG LOG_LEVEL INFO
-logging.basicConfig(
-    format="%(levelname)s - %(name)s - %(message)s",
-    level=logging.getLevelName(config("LOG_LEVEL", default="ERROR")),
-)
+log_dir = "logs"
+try:
+    makedirs(log_dir)
+except FileExistsError:
+    pass
+
+logger = logging.getLogger()
+fh = logging.FileHandler(join(log_dir, "prodil.log"))
+fh.setLevel(logging.NOTSET)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
 
 if __name__ == "__main__":
     ProDil().run()
