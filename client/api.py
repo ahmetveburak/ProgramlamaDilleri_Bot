@@ -46,13 +46,13 @@ class ProdilAPI(object):
             sys.exit(1)
 
     def get(self, url: str) -> Any:
-        response = self.session.get(f"{self.API_BASE_URL}/{url}/")
+        response = self.session.get(f"{self.API_BASE_URL}/{url}")
         if response.status_code == 200:
             return response.json()
         return {}
 
     def get_category_id(self, category: str) -> int:
-        category_id = self.get(f"categories/{quote(category)}")
+        category_id = self.get(f"categories/{quote(category)}/")
         return category_id.get("id")
 
     def get_categories(self) -> List[Dict[int, str]]:
