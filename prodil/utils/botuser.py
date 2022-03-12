@@ -6,24 +6,24 @@ from pyrogram.types import InlineKeyboardButton as InlineKB
 from pyrogram.types import User
 
 from prodil.BotConfig import api
+from prodil.utils.messages import SELECTED
 from prodil.utils.quest import questions
 
 
 class UserNavigation(object):
     query_order = (None, "category", "local", "content", None)
-    CHECK = "🟢"
 
     def __init__(self, user: User):
-        self.id = getattr(user, "id")
-        self.username = getattr(user, "username")
-        self.first_name = getattr(user, "first_name")
-        self.last_name = getattr(user, "last_name")
+        self.id = user.id
+        self.username = user.username
+        self.first_name = user.first_name
+        self.last_name = user.last_name
 
         self.start = True
         self.page = 1
         self.all_page = 0
 
-        self.respons = {}
+        self.response = {}
         self.choices = {}
 
         self.category = None
@@ -58,7 +58,7 @@ class UserNavigation(object):
         """
         Get response data for current page.
         """
-        return self.respons.get(self.page)
+        return self.response.get(self.page)
 
     def get_buttons(self, data):
         """
@@ -78,7 +78,7 @@ class UserNavigation(object):
         if self.content == "DC":
             buttons.append([InlineKB(text="Indir", callback_data="download")])
 
-        buttons.append([InlineKB(text="Geri", callback_data="content")])
+        buttons.append([InlineKB(text="Bastan Basla", callback_data=questions.CATEGORY)])
 
         return buttons
 
@@ -86,7 +86,7 @@ class UserNavigation(object):
         """
         Get resources from api with choosen parameters.
         """
-        response = self.respons[self.page] = api.get_resources(**self.query_args)
+        response = self.response[self.page] = api.get_resources(**self.query_args)
         return response
 
     def get_documents(self):
@@ -94,18 +94,18 @@ class UserNavigation(object):
         Get choosen documents from choices.
         """
         # TODO Need Refactor
-        pages = self.respons.keys()
+        pages = self.response.keys()
         selected_res = defaultdict(list)
 
         for page in pages:
             for buttons in self.choices.get(page)[:2]:
                 for button in buttons:
-                    if self.CHECK in button.text:
+                    if SELECTED in button.text:
                         selected_res[page].append(button.callback_data)
 
         result = []
         for page in pages:
-            resp = self.respons.get(page).get("results")
+            resp = self.response.get(page).get("results")
             result.extend([resp[int(i) - 1] for i in selected_res[page]])
 
         return result
@@ -124,7 +124,7 @@ class UserNavigation(object):
         Parse current page's json response to readable format.
         """
         result = []
-        for i, res in enumerate(self.respons[self.page]["results"], start=1):
+        for i, res in enumerate(self.response[self.page]["results"], start=1):
             res_name = f"{i}. {res['name']}"
 
             if url := res.get("url"):

@@ -4,17 +4,18 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton
 
 from prodil.utils import USERS
+from prodil.utils.messages import NOT_SELECTED, SELECTED
 
 command = partial(filters.command, prefixes="/")
 
 
 def button_toggle(button: InlineKeyboardButton) -> None:
-    is_selected = button.text[0] == "🔴"
+    is_selected = button.text[0] == NOT_SELECTED
 
     if is_selected:
-        button.text = button.text.replace("🔴", "🟢")
+        button.text = button.text.replace(NOT_SELECTED, SELECTED)
     else:
-        button.text = button.text.replace("🟢", "🔴")
+        button.text = button.text.replace(SELECTED, NOT_SELECTED)
 
 
 async def user_not_exists(callback):
