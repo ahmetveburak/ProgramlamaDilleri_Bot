@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple, Union
 from pyrogram.types import InlineKeyboardButton as InlineKB
 
 from prodil.BotConfig import api
+from prodil.utils.messages import NOT_SELECTED
 
 
 class Local:
@@ -67,7 +68,9 @@ def slicer(button_list: List[InlineKB], size: int) -> List[List[InlineKB]]:
     return [button_list[i : i + size] for i in range(0, len(button_list), size)]
 
 
-def make_buttons(answer: Dict[str, str], size: int, back: Union[str, bool]) -> List[List[InlineKB]]:
+def make_buttons(
+    answer: Dict[str, str], size: int, back: Union[str, bool]
+) -> List[List[InlineKB]]:
     buttons = [InlineKB(text=v, callback_data=k) for k, v in answer.items()]
     buttons = slicer(buttons, size)
 
@@ -79,6 +82,9 @@ def make_buttons(answer: Dict[str, str], size: int, back: Union[str, bool]) -> L
 
 
 def content_buttons(num: int) -> List[List[InlineKB]]:
-    buttons = [InlineKB(text=f"🔴 {i+1}", callback_data=str(i + 1)) for i in range(num)]
+    buttons = [
+        InlineKB(text=f"{NOT_SELECTED} {i+1}", callback_data=str(i + 1))
+        for i in range(num)
+    ]
     buttons = slicer(buttons, 4)
     return buttons

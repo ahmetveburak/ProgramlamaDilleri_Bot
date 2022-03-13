@@ -78,7 +78,9 @@ class UserNavigation(object):
         if self.content == "DC":
             buttons.append([InlineKB(text="Indir", callback_data="download")])
 
-        buttons.append([InlineKB(text="Bastan Basla", callback_data=questions.CATEGORY)])
+        buttons.append(
+            [InlineKB(text="Bastan Basla", callback_data=questions.CATEGORY)]
+        )
 
         return buttons
 
@@ -132,7 +134,9 @@ class UserNavigation(object):
 
             authors = ", ".join(
                 [
-                    f"[{author['full_name']}]({author['site']})" if author["site"] else f"{author['full_name']}"
+                    f"[{author['full_name']}]({author['site']})"
+                    if author["site"]
+                    else f"{author['full_name']}"
                     for author in res["author"]
                 ]
             )

@@ -34,7 +34,9 @@ class ProDilFilters:
         return filter_data
 
     def _create_filter(self, data: str) -> Filter:
-        return filters.create(lambda _, __, query: query.data in self._filter_list(data))
+        return filters.create(
+            lambda _, __, query: query.data in self._filter_list(data)
+        )
 
     @property
     def category(self) -> Filter:
@@ -54,7 +56,9 @@ class ProDilFilters:
 
     @property
     def numbers(self) -> Filter:
-        return filters.create(lambda _, __, query: query.data in list(map(str, range(1, 9))))
+        return filters.create(
+            lambda _, __, query: query.data in list(map(str, range(1, 9)))
+        )
 
     @property
     def next_page(self) -> Filter:

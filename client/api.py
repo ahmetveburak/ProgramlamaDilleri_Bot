@@ -14,7 +14,13 @@ class ProdilAPI(object):
     FILE_UPDATE_PATH = "resources/files"
     session = requests.Session()
 
-    def __init__(self, api_url: str = None, email: str = None, password: str = None, config_file: str = None) -> None:
+    def __init__(
+        self,
+        api_url: str = None,
+        email: str = None,
+        password: str = None,
+        config_file: str = None,
+    ) -> None:
         self.API_BASE_URL = api_url
         self.AUTH_EMAIL = email
         self.AUTH_PASS = password
@@ -60,7 +66,12 @@ class ProdilAPI(object):
         return categories
 
     def get_resources(
-        self, level: str = "", local: str = "", content: str = "", category: str = "", page: int = 1
+        self,
+        level: str = "",
+        local: str = "",
+        content: str = "",
+        category: str = "",
+        page: int = 1,
     ) -> Dict:
         if category:
             category = self.get_category_id(category)
@@ -71,7 +82,9 @@ class ProdilAPI(object):
         return self.get(filter_url)
 
     def get_resource_slug(self, file_name: str) -> str:
-        response = self.session.get(f"{self.API_BASE_URL}/resources/?file_name{file_name}")
+        response = self.session.get(
+            f"{self.API_BASE_URL}/resources/?file_name{file_name}"
+        )
         if response.status_code == 200:
             resource = response.json()
             return resource.get("results")[0].get("slug")
@@ -81,7 +94,10 @@ class ProdilAPI(object):
             "file_size": file_size,
             "file_id": file_id,
         }
-        self.session.put(url=f"{self.API_BASE_URL}/{self.FILE_UPDATE_PATH}/{file_name}/", json=payload)
+        self.session.put(
+            url=f"{self.API_BASE_URL}/{self.FILE_UPDATE_PATH}/{file_name}/",
+            json=payload,
+        )
 
     def create_resource(self, name, file_name, file_id, file_unique_id, file_size):
         payload = {

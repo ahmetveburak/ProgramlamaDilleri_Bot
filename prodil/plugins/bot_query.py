@@ -5,7 +5,12 @@ from contextlib import suppress
 from pyrogram import Client
 from pyrogram.errors import MessageNotModified
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty
-from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, ReplyKeyboardRemove
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardMarkup,
+    Message,
+    ReplyKeyboardRemove,
+)
 
 from prodil.BotConfig import ProDil
 from prodil.utils.botuser import USERS, UserNavigation
@@ -50,7 +55,9 @@ async def query_category(_: Client, callback: CallbackQuery):
     question, answer = questions.get_choices(questions.CATEGORY)
     buttons = make_buttons(answer=answer, size=3, back=False)
 
-    await callback.edit_message_text(text=question, reply_markup=InlineKeyboardMarkup(buttons))
+    await callback.edit_message_text(
+        text=question, reply_markup=InlineKeyboardMarkup(buttons)
+    )
 
 
 @ProDil.on_callback_query(bot_filters.local & is_active_user)
@@ -58,7 +65,10 @@ async def query_local(client: Client, callback: CallbackQuery):
     user = USERS.get(callback.from_user.id)
 
     if user.start:
-        await client.delete_messages(chat_id=callback.message.chat.id, message_ids=(callback.message.message_id - 1,))
+        await client.delete_messages(
+            chat_id=callback.message.chat.id,
+            message_ids=(callback.message.message_id - 1,),
+        )
         user.start = False
 
     user.action(callback.data, questions.CATEGORY)
@@ -95,7 +105,9 @@ async def query_connection(_: Client, callback: CallbackQuery):
 
     if callback.from_user.id not in history_logs and callback.data == "LN":
         history_logs.add(callback.from_user.id)
-        history_log.info(f"{callback.from_user.id} | {user.local} | {user.content} | {user.category}")
+        history_log.info(
+            f"{callback.from_user.id} | {user.local} | {user.content} | {user.category}"
+        )
 
     user.set_page_data(callback.message.reply_markup.inline_keyboard)
     response = user.get_resources()
@@ -149,7 +161,9 @@ async def pagination(_: Client, callback: CallbackQuery):
     buttons = user.get_data()
     if user.page - 1 == 1 or not response:
         response = user.get_resources()
-        buttons = content_buttons(len(response["results"])) if user.content == "DC" else []
+        buttons = (
+            content_buttons(len(response["results"])) if user.content == "DC" else []
+        )
         buttons.extend(user.get_buttons(response))
 
     with suppress(MessageNotModified):
@@ -200,7 +214,9 @@ async def download(client: Client, callback: CallbackQuery):
 
     if len(failed_docs) > 0:
         doc_names = "\n".join(failed_docs)
-        await callback.edit_message_text(text=BotMessage.ERROR_RESOURCE % {"doc_names": doc_names})
+        await callback.edit_message_text(
+            text=BotMessage.ERROR_RESOURCE % {"doc_names": doc_names}
+        )
         await asyncio.sleep(10)
 
     await client.delete_messages(

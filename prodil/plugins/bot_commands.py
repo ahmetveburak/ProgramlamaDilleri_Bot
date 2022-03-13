@@ -21,9 +21,15 @@ async def bot_about(client: Client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("@musaitbiyerde", url="https://t.me/musaitbiyerde"),
+                    InlineKeyboardButton(
+                        "@musaitbiyerde", url="https://t.me/musaitbiyerde"
+                    ),
                 ],
-                [InlineKeyboardButton("Mühendis Köyü", url="https://t.me/koyumuhendis")],
+                [
+                    InlineKeyboardButton(
+                        "Mühendis Köyü", url="https://t.me/koyumuhendis"
+                    )
+                ],
                 [
                     InlineKeyboardButton(
                         "Kaynak Kodlar",

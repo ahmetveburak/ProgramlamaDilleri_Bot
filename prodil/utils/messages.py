@@ -9,7 +9,9 @@ class BotMessage:
     )
     NO_RESOURCE = "Bu alanda henuz kaynak bulunmamaktadir."
     ERROR_RESOURCE = (
-        "%(doc_names)s\n\n" "Isimli dosyalar gonderilirken sorun olustu. " "Geri bildirim icin: @musaitbiyerde"
+        "%(doc_names)s\n\n"
+        "Isimli dosyalar gonderilirken sorun olustu. "
+        "Geri bildirim icin: @musaitbiyerde"
     )
     RESTART = "Tekrar baslamak istersen /start komutunu calistirabilirsin."
     NO_CHOICE = "Herhangi bir kaynak secilmedi!"
