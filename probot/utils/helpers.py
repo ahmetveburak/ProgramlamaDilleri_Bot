@@ -3,8 +3,8 @@ from functools import partial
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton
 
-from prodil.utils import USERS
-from prodil.utils.messages import NOT_SELECTED, SELECTED
+from probot.utils import USERS
+from probot.utils.messages import NOT_SELECTED, SELECTED
 
 command = partial(filters.command, prefixes="/")
 

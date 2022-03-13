@@ -5,9 +5,9 @@ from typing import Dict, List
 from pyrogram.types import InlineKeyboardButton as InlineKB
 from pyrogram.types import User
 
-from prodil.BotConfig import api
-from prodil.utils.messages import SELECTED
-from prodil.utils.quest import questions
+from probot.BotConfig import api
+from probot.utils.messages import SELECTED
+from probot.utils.quest import questions
 
 
 class UserNavigation(object):

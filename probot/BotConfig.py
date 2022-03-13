@@ -11,8 +11,8 @@ class ProDil(Client, Message):
             session_name=name,
             config_file=f"{name}.ini",
             workers=8,
-            plugins=dict(root=f"{name}/plugins"),
-            workdir=f"{name}",
+            plugins=dict(root="probot/plugins"),
+            workdir="probot",
         )
 
     async def start(self):

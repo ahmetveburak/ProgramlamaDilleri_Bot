@@ -12,13 +12,13 @@ from pyrogram.types import (
     ReplyKeyboardRemove,
 )
 
-from prodil.BotConfig import ProDil
-from prodil.utils.botuser import USERS, UserNavigation
-from prodil.utils.filters import bot_filters
-from prodil.utils.helpers import button_toggle, command, is_active_user
-from prodil.utils.logger import get_logger
-from prodil.utils.messages import BotMessage
-from prodil.utils.quest import content_buttons, make_buttons, questions
+from probot.BotConfig import ProDil
+from probot.utils.botuser import USERS, UserNavigation
+from probot.utils.filters import bot_filters
+from probot.utils.helpers import button_toggle, command, is_active_user
+from probot.utils.logger import get_logger
+from probot.utils.messages import BotMessage
+from probot.utils.quest import content_buttons, make_buttons, questions
 
 logger = get_logger()
 history_log = get_logger(name="history", file_name="history.log", level=logging.INFO)

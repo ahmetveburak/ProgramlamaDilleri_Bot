@@ -3,7 +3,7 @@ from typing import List
 from pyrogram import filters
 from pyrogram.filters import Filter
 
-from prodil.utils import questions
+from probot.utils import questions
 
 
 class ProDilFilters:

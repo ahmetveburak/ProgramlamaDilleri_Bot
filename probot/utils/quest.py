@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple, Union
 
 from pyrogram.types import InlineKeyboardButton as InlineKB
 
-from prodil.BotConfig import api
-from prodil.utils.messages import NOT_SELECTED
+from probot.BotConfig import api
+from probot.utils.messages import NOT_SELECTED
 
 
 class Local:

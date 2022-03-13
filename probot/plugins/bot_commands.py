@@ -3,8 +3,8 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from prodil.BotConfig import ProDil, api
-from prodil.utils.helpers import command
+from probot.BotConfig import ProDil, api
+from probot.utils.helpers import command
 
 
 @ProDil.on_message(command("hakkinda") & filters.private)
@@ -27,7 +27,7 @@ async def bot_about(client: Client, message: Message):
                 ],
                 [
                     InlineKeyboardButton(
-                        "Mühendis Köyü", url="https://t.me/koyumuhendis"
+                        "Mühendis Köyü", url="https://t.me/muhendiskoyu"
                     )
                 ],
                 [
