@@ -41,9 +41,12 @@ async def bot_about(client: Client, message: Message):
     )
 
 
-@ProDil.on_message(filters.document & filters.private)
+is_admin = filters.create(lambda _, __, message: message.from_user.id in ProDil.admins)
+
+
+@ProDil.on_message(is_admin & filters.document & filters.private)
 async def bot_file_update(_: Client, message: Message):
-    caption = getattr(message, "caption")
+    caption = message.caption
     create = api.create_resource(
         name=message.caption if caption else message.document.file_name,
         file_name=message.document.file_name,

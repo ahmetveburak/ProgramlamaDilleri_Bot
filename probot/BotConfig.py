@@ -5,6 +5,8 @@ from client.api import ProdilAPI
 
 
 class ProDil(Client, Message):
+    admins = (635568322,)
+
     def __init__(self):
         name = self.__class__.__name__.lower()
         super().__init__(
