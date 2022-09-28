@@ -46,7 +46,7 @@ class ProdilAPI(object):
 
     def check_connection(self):
         try:
-            requests.get(self.API_BASE_URL)
+            self.session.get(self.API_BASE_URL)
         except ConnectionError:
             logging.log(ERROR, "Can not connect to API. Check your server is running.")
             sys.exit(1)
