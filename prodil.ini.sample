@@ -1,9 +1,9 @@
 [pyrogram]
-API_ID = 123456
-API_HASH = 3214213j3kl52423j4kl342
-BOT_TOKEN = 142342342:AKDsadkj213lALJdsalj
+API_ID = <your-api-id>
+API_HASH = <your-api-hash>
+BOT_TOKEN = <your-bot-token>
 
 [prodil]
-API_BASE_URL = http://127.0.0.1:8000/api
+API_BASE_URL = http://api:8000/api
 AUTH_EMAIL = admin@admin.com
 AUTH_PASS = 1
